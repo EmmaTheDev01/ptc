@@ -1,0 +1,74 @@
+.nav{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.logo{
+    width: 30%;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+}
+.menu{
+    width: 35%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.user{
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+.logo li{
+    padding: 1px 16px;
+    list-style-type: none;
+    cursor: pointer;
+}
+.menu li{
+    color: #4b4b4b;
+    padding: 1px 16px;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.user li{
+    padding: 1px 16px;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.menu li:hover{
+   color: rgb(65, 65, 204);
+}
+.user li:hover{
+   color: rgb(65, 65, 204);
+}
+.money{
+    border: 1px solid rgb(226, 38, 38);
+    font-weight: 900;
+    color:brown;
+    border-radius: 16px;
+    cursor: pointer;
+}
+.money:hover{
+    border: 1px solid #000;
+    font-weight: 900;
+    color:#000;
+    border-radius: 16px;
+    cursor: pointer;
+}
+.user_icon{
+    margin-left: 1rem;
+    border: 1px solid black;
+    background-color: black;
+    width: 0rem;
+    height: 1.6rem;
+    border-radius: 50%;
+}
