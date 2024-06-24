@@ -55,11 +55,11 @@ const posts = [
 
 export default function Blog() {
   return (
-    <div className="bg-slate-900 py-24 sm:py-32">
+    <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl sm:text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            From the blog
+          <h2 className="text-3xl font-bold tracking-tight text-gray-700 sm:text-4xl">
+            Testimonials
           </h2>
           <p className="mt-2 text-lg leading-8 text-gray-600">
             Learn how to grow your business with our expert advice.
@@ -77,13 +77,13 @@ export default function Blog() {
                 </time>
                 <a
                   href={post.category.href}
-                  className="relative z-10 rounded-full bg-gray-700 px-3 py-1.5 font-medium text-green-500 hover:bg-gray-500"
+                  className="relative z-10 rounded-full bg-gray-200 px-3 py-1.5 font-medium text-[#29625d] hover:bg-gray-500"
                 >
                   {post.category.title}
                 </a>
               </div>
               <div className="group relative">
-                <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-300 group-hover:text-gray-600">
+                <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-600 group-hover:text-gray-600">
                   <a href={post.href}>
                     <span className="absolute inset-0" />
                     {post.title}
@@ -100,13 +100,13 @@ export default function Blog() {
                   className="h-10 w-10 rounded-full bg-gray-50"
                 />
                 <div className="text-sm leading-6">
-                  <p className="font-semibold text-green-500">
+                  <p className="font-semibold text--[#29625d]">
                     <a href={post.author.href}>
                       <span className="absolute inset-0" />
                       {post.author.name}
                     </a>
                   </p>
-                  <p className="text-gray-300">{post.author.role}</p>
+                  <p className="text-[#29625d]">{post.author.role}</p>
                 </div>
               </div>
             </article>

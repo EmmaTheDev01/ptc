@@ -4,7 +4,7 @@ const RegistartionForm = () => {
   return (
     <div className="h-[100vh] items-center flex justify-center px-5 lg:px-0">
       <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-        <div className="flex-1 bg-blue-900 text-center hidden md:flex">
+        <div className="flex-1 bg-[#29625d] text-center hidden md:flex">
           <div
             className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
             style={{
@@ -15,7 +15,7 @@ const RegistartionForm = () => {
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
           <div className=" flex flex-col items-center">
             <div className="text-center">
-              <h1 className="text-2xl xl:text-4xl font-extrabold text-blue-900">
+              <h1 className="text-2xl xl:text-4xl font-extrabold text-[#29625d]">
                 User Sign up
               </h1>
               <p className="text-[12px] text-gray-500">
@@ -44,7 +44,7 @@ const RegistartionForm = () => {
                   type="password"
                   placeholder="Password"
                 />
-                <button className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                <button className="mt-5 tracking-wide font-semibold bg-[#29625d] text-gray-100 w-full py-4 rounded-lg hover:bg-[#fed592] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                   <svg
                     className="w-6 h-6 -ml-2"
                     fill="none"
@@ -62,7 +62,7 @@ const RegistartionForm = () => {
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Already have an account?{" "}
                   
-                    <Link to="/login" className="text-blue-900 font-semibold">
+                    <Link to="/login" className="text-[#29625d] font-semibold">
                       Login
                     </Link>
                  
