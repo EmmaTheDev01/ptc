@@ -15,7 +15,8 @@ const navigation = [
   { name: 'Earn', to: '/earn' }, // Replace href with to
   { name: 'Surveys', to: '/surveys' }, // Replace href with to
   { name: 'Blog', to: '/blog' }, // Replace href with to
-  { name: 'Advertise', to: '/advertise' }, // Replace href with to
+  { name: 'Advertise', to: '/advertise' },
+  { name: 'Contact Us', to: '/contact' },
 ];
 
 const userNavigation = [
