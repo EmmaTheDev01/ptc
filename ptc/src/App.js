@@ -7,6 +7,8 @@ import Plans from './pages/Plans';
 import Earn from './pages/Earn';
 import SurveyPage from './pages/SurveyPage';
 import BlogPage from './pages/BlogPage';
+import AdvertisePage from './pages/AdvertisePage';
+import Contact from './pages/Contact';
 function App() {
   return (
     <Router>
@@ -19,6 +21,8 @@ function App() {
           <Route path='/earn' element={<Earn/>} />
           <Route path='/surveys' element={<SurveyPage/>}  />
           <Route path='/blog' element={<BlogPage/>}/>
+          <Route path='/advertise' element={<AdvertisePage/>}/>
+          <Route path='/contact' element={<Contact/>}/>
         </Routes>
       </div>
     </Router>
