@@ -1,6 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AdCard = () => {
+    const [watched, setWatched] = useState(false);
+    const [timer, setTimer] = useState(30);
+
+    useEffect(() => {
+        let countdown;
+        if (watched && timer > 0) {
+            countdown = setTimeout(() => {
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
+            console.log(countdown);
+        } else if (timer === 0) {
+            alert('Ad Watched');
+        }
+
+        return () => clearTimeout(countdown);
+    }, [watched, timer]);
+
+    const handleWatchAd = () => {
+        // Start the countdown when the ad is clicked
+        setWatched(true);
+    };
+
     return (
         <div className="relative pt-2 lg:pt-2 min-h-screen">
             <div
@@ -10,9 +32,9 @@ const AdCard = () => {
                 <div className="w-full bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
                     <div className="w-full mx-auto rounded-2xl bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-center px-2 mx-auto">
-                            <article className="bg-white p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border">
+                            <article className="bg-white p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border" onClick={handleWatchAd}>
                                 <a target="_blank" href="https://guriraline.netlify.app" className="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
-                                <div className="relative mb-4 rounded-2xl">
+                                <div className="relative mb-4 rounded-2xl" onClick={handleWatchAd}>
                                     <img
                                         className="max-h-80 rounded-2xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
                                         src="https://images.pexels.com/photos/163097/twitter-social-media-communication-internet-network-163097.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
@@ -36,7 +58,7 @@ const AdCard = () => {
                                         </svg>
                                     </a>
                                 </div>
-                                <div className="flex justify-between items-center w-full pb-4 mb-auto">
+                                <div className="flex justify-between items-center w-full pb-4 mb-auto" onClick={handleWatchAd}>
                                     <div className="flex items-center">
                                         <div className="pr-3">
                                             <img
