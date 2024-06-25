@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Plans from './pages/Plans';
 import Earn from './pages/Earn';
+import SurveyPage from './pages/SurveyPage';
+import BlogPage from './pages/BlogPage';
 function App() {
   return (
     <Router>
@@ -15,6 +17,8 @@ function App() {
           <Route path='/login' element={<LoginPage/>} />
           <Route path='/get-started' element={<Plans/>} />
           <Route path='/earn' element={<Earn/>} />
+          <Route path='/surveys' element={<SurveyPage/>}  />
+          <Route path='/blog' element={<BlogPage/>}/>
         </Routes>
       </div>
     </Router>
