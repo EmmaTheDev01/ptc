@@ -12,18 +12,18 @@ const user = {
 };
 
 const navigation = [
-  { name: 'Earn', to: '/earn' }, // Replace href with to
-  { name: 'Surveys', to: '/surveys' }, // Replace href with to
-  { name: 'Blog', to: '/blog' }, // Replace href with to
+  { name: 'Earn', to: '/earn' },
+  { name: 'Surveys', to: '/surveys' },
+  { name: 'Blog', to: '/blog' },
   { name: 'Advertise', to: '/advertise' },
   { name: 'Contact Us', to: '/contact' },
 ];
 
 const userNavigation = [
-  { name: 'Your Profile', to: '/profile' }, // Replace href with to
-  { name: 'Settings', to: '/settings' }, // Replace href with to
-  { name: 'Sign out', to: '/signout' }, // Replace href with to
-  { name: 'Dashboard', to: '/dashboard' }, // Replace href with to
+  { name: 'Your Profile', to: '/profile' },
+  { name: 'Settings', to: '/settings' },
+  { name: 'Sign out', to: '/signout' },
+  { name: 'Dashboard', to: '/dashboard' },
 ];
 
 function classNames(...classes) {
@@ -41,7 +41,7 @@ export default function NavBar() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <h2 className="text-[#29625d] font-[900]">Guriraline</h2>
+                      <h2 className="text-[#29625d] text-2xl font-[900]">Guriraline</h2>
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
