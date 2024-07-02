@@ -15,7 +15,6 @@ const navigation = [
   { name: 'Earn', to: '/earn' },
   { name: 'Surveys', to: '/surveys' },
   { name: 'Blog', to: '/blog' },
-  { name: 'Advertise', to: '/advertise' },
   { name: 'Contact Us', to: '/contact' },
 ];
 
