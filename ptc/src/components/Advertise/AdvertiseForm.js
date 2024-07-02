@@ -19,17 +19,17 @@ const AdvertiseForm = () => {
     // Prepare form data
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('description', description);
+    formData.append('description', description); // Assuming your backend expects 'description' instead of 'desc'
     formData.append('price', price);
     images.forEach((image) => {
-      formData.append('images', image);
+      formData.append('images', image); // Assuming your backend expects 'images' as an array of files
     });
 
     try {
       // Perform API request to create ad using axios
       const response = await axios.post(`${server}/adverts/create`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json',
         }
       });
 
@@ -65,7 +65,7 @@ const AdvertiseForm = () => {
           </label>
           <input
             type="text"
-            name="name"
+            name="title"
             value={title}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-green-900 focus:border-green-900 sm:text-sm"
             onChange={(e) => setTitle(e.target.value)}
@@ -81,7 +81,6 @@ const AdvertiseForm = () => {
           <textarea
             cols="30"
             rows="8"
-            type="text"
             name="description"
             value={description}
             className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-green-900 focus:border-green-900 sm:text-sm"
@@ -113,7 +112,6 @@ const AdvertiseForm = () => {
           </label>
           <input
             type="file"
-            name=""
             id="upload"
             className="hidden"
             multiple
@@ -131,7 +129,7 @@ const AdvertiseForm = () => {
                   key={index}
                   src={URL.createObjectURL(image)}
                   alt={`ad ${index}`}
-                  className="h-[120px] w-[120px] object-cover m-2"
+                  className="h-[100px] w-[100px] object-cover m-2"
                 />
               ))}
           </div>
@@ -139,7 +137,7 @@ const AdvertiseForm = () => {
           <div>
             <input
               type="submit"
-              value="Create"
+              value="Create Ad"
               className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-green-900 focus:border-green-900 sm:text-sm"
             />
           </div>
