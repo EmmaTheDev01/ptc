@@ -11,20 +11,28 @@ const AdvertiseForm = () => {
   const [price, setPrice] = useState("");
   const [photo, setPhoto] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [redirect, setRedirect] = useState("");
   const navigate = useNavigate();
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (photo.length === 0 && !imageUrl) {
+      toast.error("Please upload at least one image or provide an image URL.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("desc", desc);
     formData.append("price", price);
+    formData.append("redirect", redirect);
 
     // Append images if photo array is not empty
     if (photo.length > 0) {
       photo.forEach((photoFile) => {
-        formData.append("photo", photoFile); // Ensure "photo" matches backend field name
+        formData.append("images", photoFile); // Ensure "images" matches backend field name
       });
     }
 
@@ -32,6 +40,7 @@ const AdvertiseForm = () => {
     if (imageUrl) {
       formData.append("imageUrl", imageUrl);
     }
+
     try {
       const response = await axios.post(`${server}/adverts/create`, formData, {
         headers: {
@@ -42,8 +51,7 @@ const AdvertiseForm = () => {
       if (response.status === 200) {
         toast.success("Ad created successfully!");
         navigate("/earn");
-        toast.success("Ad created successfully!");
-        window.location.reload();
+        // Do not reload the page, React will handle the navigation
       } else {
         toast.error(`Error: ${response.data.message}`);
       }
@@ -105,6 +113,7 @@ const AdvertiseForm = () => {
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-green-900 focus:border-green-900 sm:text-sm"
             onChange={(e) => setPrice(e.target.value)}
             placeholder="Enter your product price..."
+            required
           />
         </div>
 
@@ -123,6 +132,20 @@ const AdvertiseForm = () => {
 
         <br />
         <div>
+          <label className="pb-2">Redirect Url</label>
+          <input
+            type="text"
+            name="redirect"
+            value={redirect}
+            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-green-900 focus:border-green-900 sm:text-sm"
+            onChange={(e) => setRedirect(e.target.value)}
+            placeholder="Enter Redirect URL..."
+            required
+          />
+        </div>
+
+        <br />
+        <div>
           <label className="pb-2">
             Upload Images <span className="text-green-700">*</span>
           </label>
@@ -133,9 +156,9 @@ const AdvertiseForm = () => {
             multiple
             onChange={handleImageChange}
             accept="image/*"
-            // Make file submission not required if imageUrl is provided
-            required={!imageUrl}
-            name="photo" // This is crucial for Multer to recognize the field name
+            // Conditional required based on imageUrl
+            required={photo.length === 0 && !imageUrl}
+            name="images"
           />
           <div className="w-full flex items-center flex-wrap">
             <label htmlFor="upload">
