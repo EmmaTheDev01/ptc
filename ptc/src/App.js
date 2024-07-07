@@ -9,6 +9,7 @@ import SurveyPage from './pages/SurveyPage';
 import BlogPage from './pages/BlogPage';
 import AdvertisePage from './pages/AdvertisePage';
 import Contact from './pages/Contact';
+import Dashboard from './pages/dashboard/Dashboard';
 function App() {
   return (
     <Router>
@@ -23,6 +24,7 @@ function App() {
           <Route path='/blog' element={<BlogPage/>}/>
           <Route path='/advertise' element={<AdvertisePage/>}/>
           <Route path='/contact' element={<Contact/>}/>
+          <Route path='/dashboard' element={<Dashboard/>} />
         </Routes>
       </div>
     </Router>
