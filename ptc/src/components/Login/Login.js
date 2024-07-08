@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext  } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import Axios
 import server from "../../utils/server";
+import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
+      const response = await axios.post(
         `${server}/auth/login`,
         {
           email,
@@ -74,7 +75,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                
+
                 <button
                   type="submit"
                   className="mt-5 tracking-wide font-semibold bg-[#29625d] text-gray-100 w-full py-4 rounded-lg hover:bg-[#fed592] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
