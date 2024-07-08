@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import Navbar from '../../components/NavBar/NavBar';
 import SideBar from '../../components/sidebar/SideBar';
 import DashboardMain from '../../components/Main/DashboardMain';
-import { AuthContext } from '../../context/AuthContext'; // Replace with your authentication context
+import { AuthContext } from '../../context/AuthContext'; // Import your authentication context
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { isLoggedIn, loading } = useContext(AuthContext); // Replace with your authentication state
+  const { isLoggedIn, loading, isAdmin } = useContext(AuthContext); // Destructure isAdmin from AuthContext
   const navigate = useNavigate();
-  
+
   // Use a loading state to handle initial authentication check
   const [authChecked, setAuthChecked] = useState(false);
 
@@ -16,11 +16,14 @@ const Dashboard = () => {
     // Check if user is authenticated
     if (!isLoggedIn && !loading) {
       navigate('/login');
+    } else if (isLoggedIn && !isAdmin) {
+      // Redirect to home or another route if the user is not an admin
+      navigate('/earn');
     }
-    
+
     // Ensure the authentication check is complete
     setAuthChecked(true);
-  }, [isLoggedIn, loading, navigate]);
+  }, [isLoggedIn, loading, isAdmin, navigate]);
 
   // Return null while checking authentication to prevent rendering unauthorized content
   if (!authChecked) {
@@ -32,7 +35,12 @@ const Dashboard = () => {
     return null;
   }
 
-  // Render Dashboard if logged in
+  // If not an admin, redirect has already been handled above
+  if (!isAdmin) {
+    return null;
+  }
+
+  // Render Dashboard if logged in and isAdmin is true
   return (
     <div>
       <Navbar/>

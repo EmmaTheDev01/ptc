@@ -27,7 +27,10 @@ const Login = () => {
       // Assuming login was successful, update the context
       login(); // Update the AuthContext state to indicate the user is logged in
       toast.success("Login Success!");
-      navigate("/dashboard"); // Redirect to dashboard upon successful login
+      localStorage.setItem("token", response.data.token)
+      localStorage.setItem("role", response.data.role);
+      navigate("/earn"); // Redirect to dashboard upon successful login
+      console.log(response);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
