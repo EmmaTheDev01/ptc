@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Navbar from '../../components/NavBar/NavBar';
 import SideBar from '../../components/sidebar/SideBar';
 import DashboardMain from '../../components/Main/DashboardMain';
@@ -6,21 +6,33 @@ import { AuthContext } from '../../context/AuthContext'; // Replace with your au
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { isLoggedIn } = useContext(AuthContext); // Replace with your authentication state
+  const { isLoggedIn, loading } = useContext(AuthContext); // Replace with your authentication state
   const navigate = useNavigate();
+  
+  // Use a loading state to handle initial authentication check
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Redirect to login page if not logged in
-    if (!isLoggedIn) {
+    // Check if user is authenticated
+    if (!isLoggedIn && !loading) {
       navigate('/login');
     }
-  }, [isLoggedIn, navigate]);
+    
+    // Ensure the authentication check is complete
+    setAuthChecked(true);
+  }, [isLoggedIn, loading, navigate]);
 
-  // Return null if not logged in to prevent rendering of unauthorized content
+  // Return null while checking authentication to prevent rendering unauthorized content
+  if (!authChecked) {
+    return null;
+  }
+
+  // If not logged in, redirect has already been handled above
   if (!isLoggedIn) {
     return null;
   }
 
+  // Render Dashboard if logged in
   return (
     <div>
       <Navbar/>

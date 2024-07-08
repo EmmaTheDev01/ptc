@@ -1,9 +1,10 @@
-import React, { useState, useContext  } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import Axios
 import server from "../../utils/server";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -23,9 +24,10 @@ const Login = () => {
         { withCredentials: true }
       );
 
+      // Assuming login was successful, update the context
+      login(); // Update the AuthContext state to indicate the user is logged in
       toast.success("Login Success!");
-      navigate("/earn");
-      window.location.reload();
+      navigate("/dashboard"); // Redirect to dashboard upon successful login
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
