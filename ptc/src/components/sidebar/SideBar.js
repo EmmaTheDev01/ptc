@@ -7,8 +7,9 @@ const SideBar = () => {
         <nav className="-mx-3 space-y-6 ">
           <div className="space-y-3 ">
             <Link
+              to='/dashboard'
               className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg -800 ay-200 hover:text-gray-700"
-              href="#"
+
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +30,9 @@ const SideBar = () => {
             </Link>
 
             <Link
+              to='/all-requests'
               className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg -800 ay-200 hover:text-gray-700"
-              href="#"
+
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -51,8 +53,9 @@ const SideBar = () => {
             </Link>
           </div>
           <Link
+            to='/all-ads'
             className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg -800 ay-200 hover:text-gray-700"
-            href="#"
+
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,8 +75,9 @@ const SideBar = () => {
             <span className="mx-2 text-sm font-medium">All Ads</span>
           </Link>
           <Link
+            to='/all-users'
             className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg -800 ay-200 hover:text-gray-700"
-            href="#"
+
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -94,8 +98,9 @@ const SideBar = () => {
           </Link>
 
           <Link
+            to='/approved'
             className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg -800 ay-200 hover:text-gray-700"
-            href="#"
+
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

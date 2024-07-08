@@ -10,6 +10,10 @@ import BlogPage from './pages/BlogPage';
 import AdvertisePage from './pages/AdvertisePage';
 import Contact from './pages/Contact';
 import Dashboard from './pages/dashboard/Dashboard';
+import AllAds from './pages/dashboard/AllAds';
+import AllRequests from './pages/dashboard/AllRequests';
+import AllUsers from './pages/dashboard/AllUsers';
+import ApprovedRequests from './pages/dashboard/ApprovedRequests';
 function App() {
   return (
     <Router>
@@ -25,6 +29,10 @@ function App() {
           <Route path='/advertise' element={<AdvertisePage/>}/>
           <Route path='/contact' element={<Contact/>}/>
           <Route path='/dashboard' element={<Dashboard/>} />
+          <Route path='/all-ads' element={<AllAds/>} />
+          <Route path='/all-users' element={<AllUsers/>} />
+          <Route path='/all-requests' element={<AllRequests/>} />
+          <Route path='approved' element={<ApprovedRequests/>} />
         </Routes>
       </div>
     </Router>
