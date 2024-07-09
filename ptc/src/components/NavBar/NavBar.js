@@ -2,35 +2,41 @@ import React, { useContext } from 'react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@NavBar.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
-
-const navigation = [
-  { name: "Earn", to: "/earn" },
-  { name: "Surveys", to: "/surveys" },
-  { name: "Blog", to: "/blog" },
-  { name: 'Contact Us', to: '/contact' },
-];
-
-const userNavigation = [
-  { name: 'Your Profile', to: '/profile' },
-  { name: 'Dashboard', to: '/dashboard' },
-  { name: 'Sign out', to: '/signout' },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const user = {
+    name: 'Tom Cook',
+    email: 'tom@NavBar.com',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-DSW54utMSZ6J1F9luVr6YYDoRZ-FQYCL3w&s',
+  };
+
+  const navigation = [
+    { name: 'Earn', to: '/earn' },
+    { name: 'Surveys', to: '/surveys' },
+    { name: 'Blog', to: '/blog' },
+    { name: 'Contact Us', to: '/contact' },
+  ];
+
+  const userNavigation = [
+    { name: 'Your Profile', to: '/profile' },
+    { name: 'Dashboard', to: '/dashboard' },
+    { name: 'Sign out', onClick: handleLogout },
+  ];
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+  }
+
+  function handleLogout() {
+    logout(); // Call logout function from AuthContext
+    navigate('/'); // Redirect to homepage after logout
+  }
 
   return (
     <>
@@ -92,15 +98,15 @@ export default function NavBar() {
                             {userNavigation.map((item) => (
                               <MenuItem key={item.name}>
                                 {({ focus }) => (
-                                  <Link
-                                    to={item.to}
+                                  <button
+                                    onClick={item.onClick} // Call onClick handler for "Sign out"
                                     className={classNames(
                                       focus ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700',
+                                      'block px-4 py-2 text-sm text-gray-700 w-full' ,
                                     )}
                                   >
                                     {item.name}
-                                  </Link>
+                                  </button>
                                 )}
                               </MenuItem>
                             ))}

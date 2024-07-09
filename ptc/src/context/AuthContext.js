@@ -47,6 +47,7 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('role'); // Remove role from localStorage
     setIsLoggedIn(false);
     setIsAdmin(false);
+    window.location.reload();
   };
 
   // Call checkAuthStatus on component mount to initialize authentication check
