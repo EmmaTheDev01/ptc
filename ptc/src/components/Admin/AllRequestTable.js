@@ -38,8 +38,8 @@ const AllRequestTable = () => {
     fetchRequests();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className='w-auto ml-auto mr-auto mt-4'>Loading...</div>;
+  if (error) return <div className='w-auto ml-auto mr-auto mt-4'>Error: {error}</div>;
 
   return (
     <div className='w-full'>

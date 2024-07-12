@@ -33,8 +33,8 @@ const AllUserTable = () => {
 
     fetchUsers();
   }, []);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching users: {error.message}</p>;
+  if (loading) return <p className='w-auto ml-auto mr-auto mt-4'>Loading...</p>;
+  if (error) return <p className='w-auto ml-auto mr-auto mt-4'>Error fetching users: {error.message}</p>;
 
   return (
     <div className='w-full'>
