@@ -17,7 +17,7 @@ const AllUserTable = () => {
           throw new Error('No token found'); // Handle this case according to your app's logic
         }
 
-        const response = await axios.get(`${server}/user/all`, {
+        const response = await axios.get(`${server}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -37,7 +37,7 @@ const AllUserTable = () => {
   if (error) return <p>Error fetching users: {error.message}</p>;
 
   return (
-    <div>
+    <div className='w-full'>
       <section className='p-6 m-2 w-full'>
         <div className="mb-4 w-full">
           <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2 w-full">
