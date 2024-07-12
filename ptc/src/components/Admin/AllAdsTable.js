@@ -52,8 +52,8 @@ const AllAdsTable = () => {
     fetchAds();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className='flex justify-center items-center h-48'>Loading...</div>;
+  if (error) return <div className='flex justify-center items-center h-48'>Error: {error}</div>;
 
   return (
     <div className='w-full'>
