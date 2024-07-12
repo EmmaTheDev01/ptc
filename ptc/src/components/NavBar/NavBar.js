@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Disclosure, Menu } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
   const { isLoggedIn, logout } = useContext(AuthContext);
@@ -34,8 +32,12 @@ export default function NavBar() {
   }
 
   function handleLogout() {
-    logout(); // Call logout function from AuthContext
-    navigate('/'); // Redirect to homepage after logout
+    logout();
+    navigate('/login'); // Redirect to homepage after logout
+  }
+
+  function handleNavigation(to) {
+    navigate(to);
   }
 
   return (
@@ -59,9 +61,6 @@ export default function NavBar() {
                             className={classNames(
                               'text-gray-700 hover:text-[#29625d]',
                               'rounded-md px-3 py-2 text-sm font-medium',
-                              {
-                                'text-[#29625d]': item.current,
-                              }
                             )}
                           >
                             {item.name}
@@ -85,39 +84,38 @@ export default function NavBar() {
                         {/* Profile dropdown */}
                         <Menu as="div" className="relative ml-3">
                           <div>
-                            <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                               <span className="absolute -inset-1.5" />
                               <span className="sr-only">Open user menu</span>
                               <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
-                            </MenuButton>
+                            </Menu.Button>
                           </div>
-                          <MenuItems
-                            transition
-                            className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                          <Menu.Items
+                            className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                           >
                             {userNavigation.map((item) => (
-                              <MenuItem key={item.name}>
-                                {({ focus }) => (
+                              <Menu.Item key={item.name}>
+                                {({ active }) => (
                                   <button
-                                    onClick={item.onClick} // Call onClick handler for "Sign out"
+                                    onClick={() => item.onClick ? item.onClick() : handleNavigation(item.to)}
                                     className={classNames(
-                                      focus ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700 w-full',
+                                      active ? 'bg-gray-100' : '',
+                                      'block px-4 py-2 text-sm text-gray-700 w-full text-left'
                                     )}
                                   >
                                     {item.name}
                                   </button>
                                 )}
-                              </MenuItem>
+                              </Menu.Item>
                             ))}
-                          </MenuItems>
+                          </Menu.Items>
                         </Menu>
                       </div>
                     </div>
                   )}
                   <div className="-mr-2 flex md:hidden">
                     {/* Mobile menu button */}
-                    <DisclosureButton className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700  hover:text-[#29625d] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 hover:text-[#29625d] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="absolute -inset-0.5" />
                       <span className="sr-only">Open main menu</span>
                       {open ? (
@@ -125,29 +123,25 @@ export default function NavBar() {
                       ) : (
                         <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
                       )}
-                    </DisclosureButton>
+                    </Disclosure.Button>
                   </div>
                 </div>
               </div>
 
-              <DisclosurePanel className="md:hidden">
+              <Disclosure.Panel className="md:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                   {navigation.map((item) => (
-                    <DisclosureButton
+                    <Disclosure.Button
                       key={item.name}
                       as={Link}
                       to={item.to}
                       className={classNames(
-                        'text-gray-700  hover:text-[#29625d]',
+                        'text-gray-700 hover:text-[#29625d]',
                         'block rounded-md px-3 py-2 text-base font-medium',
-                        {
-                          ' text-[#29625d]': item.current,
-                        }
                       )}
-                      aria-current={item.current ? 'page' : undefined}
                     >
                       {item.name}
-                    </DisclosureButton>
+                    </Disclosure.Button>
                   ))}
                 </div>
                 {isLoggedIn && (
@@ -171,19 +165,19 @@ export default function NavBar() {
                     </div>
                     <div className="mt-3 space-y-1 px-2">
                       {userNavigation.map((item) => (
-                        <DisclosureButton
+                        <Disclosure.Button
                           key={item.name}
-                          as={Link}
-                          to={item.to}
+                          as="button"
+                          onClick={() => item.onClick ? item.onClick() : handleNavigation(item.to)}
                           className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-700 hover:text-white"
                         >
                           {item.name}
-                        </DisclosureButton>
+                        </Disclosure.Button>
                       ))}
                     </div>
                   </div>
                 )}
-              </DisclosurePanel>
+              </Disclosure.Panel>
             </>
           )}
         </Disclosure>
