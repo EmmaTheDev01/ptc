@@ -80,10 +80,14 @@ const Profile = () => {
                 <li className="flex items-center py-3">
                   <span>Membership</span>
                   <span className="ml-auto">
-                    <span className={`bg-${userData?.membership === "premium" ? "gold" : userData?.membership === "standard" ? "silver" : "green"}-500 py-1 px-2 rounded text-white text-sm`}>
-                      {userData?.membership}
+                    <span className={`py-1 px-2 rounded text-white text-sm ${userData?.membership === "premium" ? "bg-[#DAA520]" :
+                        userData?.membership === "standard" ? "bg-[#c0c0c0]" :
+                          "bg-green-500"
+                      }`}>
+                      {userData?.membership || "No Membership"}
                     </span>
                   </span>
+
                 </li>
                 <li className="flex items-center py-3">
                   <span>Member since</span>
@@ -116,7 +120,7 @@ const Profile = () => {
               </div>
               <div className="text-gray-700">
                 <span className="text-2xl mt-3 font-semibold text-green-600"><FaArrowDown /></span>
-                <p className="text-2xl font-semibold">RWF {userData?.currentBalance || "0.00"}</p>
+                <p className="text-2xl font-semibold">RWF {userData?.currentBalance > 0 ? userData?.currentBalance : userData?.currentBalance +".00"}</p>
               </div>
             </div>
           </div>
@@ -143,7 +147,7 @@ const Profile = () => {
               </div>
               <div className="text-gray-700">
                 <span className="text-2xl mt-3 font-semibold text-red-600"><FaArrowUp /></span>
-                <p className="text-2xl font-semibold">RWF {userData?.withdrawnBalance || "0.00"}</p>
+                <p className="text-2xl font-semibold">RWF {userData?.withdrawnBalance > 0 ? userData?.withdrawnBalance : userData?.withdrawnBalance + ".00"}</p>
               </div>
             </div>
           </div>
