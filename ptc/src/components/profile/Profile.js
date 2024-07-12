@@ -81,7 +81,7 @@ const Profile = () => {
                   <span>Membership</span>
                   <span className="ml-auto">
                     <span className={`bg-${userData?.membership === "premium" ? "gold" : userData?.membership === "standard" ? "silver" : "green"}-500 py-1 px-2 rounded text-white text-sm`}>
-                      {userData?.membership || "Free Plan"}
+                      {userData?.membership}
                     </span>
                   </span>
                 </li>
@@ -115,7 +115,7 @@ const Profile = () => {
                 <span className="tracking-wide">Current Balance</span>
               </div>
               <div className="text-gray-700">
-              <span className="text-2xl mt-3 font-semibold text-green-600"><FaArrowDown/></span>
+                <span className="text-2xl mt-3 font-semibold text-green-600"><FaArrowDown /></span>
                 <p className="text-2xl font-semibold">RWF {userData?.currentBalance || "0.00"}</p>
               </div>
             </div>
@@ -142,7 +142,7 @@ const Profile = () => {
                 <span className="tracking-wide">Withdrawals</span>
               </div>
               <div className="text-gray-700">
-              <span className="text-2xl mt-3 font-semibold text-red-600"><FaArrowUp/></span>
+                <span className="text-2xl mt-3 font-semibold text-red-600"><FaArrowUp /></span>
                 <p className="text-2xl font-semibold">RWF {userData?.withdrawnBalance || "0.00"}</p>
               </div>
             </div>
