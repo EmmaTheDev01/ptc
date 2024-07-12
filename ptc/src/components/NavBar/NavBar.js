@@ -102,7 +102,7 @@ export default function NavBar() {
                                     onClick={item.onClick} // Call onClick handler for "Sign out"
                                     className={classNames(
                                       focus ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700 w-full' ,
+                                      'block px-4 py-2 text-sm text-gray-700 w-full',
                                     )}
                                   >
                                     {item.name}

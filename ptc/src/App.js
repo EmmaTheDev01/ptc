@@ -14,6 +14,7 @@ import AllAds from './pages/dashboard/AllAds';
 import AllRequests from './pages/dashboard/AllRequests';
 import AllUsers from './pages/dashboard/AllUsers';
 import ApprovedRequests from './pages/dashboard/ApprovedRequests';
+import ProfilePage from './pages/ProfilePage';
 function App() {
   return (
     <Router>
@@ -28,6 +29,7 @@ function App() {
           <Route path='/blog' element={<BlogPage/>}/>
           <Route path='/advertise' element={<AdvertisePage/>}/>
           <Route path='/contact' element={<Contact/>}/>
+          <Route path='/profile' element={<ProfilePage/>} />
           <Route path='/dashboard' element={<Dashboard/>} />
           <Route path='/all-ads' element={<AllAds/>} />
           <Route path='/all-users' element={<AllUsers/>} />
