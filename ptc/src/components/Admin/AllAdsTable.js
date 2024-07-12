@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { server } from '../../utils/server';
+import Cookies from 'js-cookie';
 import { FaTrash } from 'react-icons/fa';
 
 const AllAdsTable = () => {
@@ -11,24 +12,39 @@ const AllAdsTable = () => {
   // Function to handle the delete request
   const handleDelete = async (adId) => {
     try {
-      await axios.delete(`${server}/adverts/${adId}`);
+      const token = localStorage.getItem('token') || Cookies.get('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+      
+      await axios.delete(`${server}/adverts/${adId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
       // Filter out the deleted ad from the ads array
-      setAds(ads.filter(ad => ad.id !== adId));
+      setAds((prevAds) => prevAds.filter(ad => ad.id !== adId));
     } catch (err) {
       console.error('Error deleting ad:', err);
-      setError(err.message || 'Failed to delete ad');
+      setError(err.response?.data?.message || err.message || 'Failed to delete ad');
     }
   };
 
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const response = await axios.get(`${server}/adverts/all-ads`);
+        const token = localStorage.getItem('token') || Cookies.get('token');
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        const response = await axios.get(`${server}/adverts/all-ads`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         console.log('API Response:', response.data); // Log the response to check its structure
         setAds(response.data.data); // Adjust this line based on the actual structure
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err.response?.data?.message || err.message || 'Failed to fetch ads');
         setLoading(false);
       }
     };
@@ -37,7 +53,7 @@ const AllAdsTable = () => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className='w-full'>
@@ -111,14 +127,13 @@ const AllAdsTable = () => {
                       <td className="py-3 px-6 border-b border-blue-gray-200 text-left">
                         <button
                           onClick={() => handleDelete(ad.id)}  // Call the handleDelete function on click
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-500 hover:text-red-700 text-center"
                         >
-                          <FaTrash/>
+                          <FaTrash />
                         </button>
                       </td>
                     </tr>
                   ))}
-                  {/* Add more rows as needed */}
                 </tbody>
               </table>
             </div>

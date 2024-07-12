@@ -1,28 +1,40 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { server } from "../../utils/server";
+import Cookies from "js-cookie";
 
 const AdCard = () => {
   const [watched, setWatched] = useState(false);
   const [timer, setTimer] = useState(30);
   const [adverts, setAdverts] = useState([]);
+  const [error, setError] = useState(null);
+
+  // Function to fetch adverts data from backend
+  const fetchAdverts = async () => {
+    try {
+      // Retrieve token from localStorage or Cookies
+      const token = localStorage.getItem("token") || Cookies.get("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await axios.get(`${server}/adverts/all-ads`, {
+        headers: { Authorization: `Bearer ${token}` },  // Add token to headers
+      });
+
+      if (response.data.success) {
+        setAdverts(response.data.data);
+        console.log(response.data);
+      } else {
+        console.error("Failed to fetch adverts");
+      }
+    } catch (error) {
+      console.error("Error fetching adverts:", error);
+      setError(error.response?.data?.message || error.message || "Failed to fetch adverts");
+    }
+  };
 
   useEffect(() => {
-    // Function to fetch adverts data from backend
-    const fetchAdverts = async () => {
-      try {
-        const response = await axios.get(`${server}/adverts/all-ads`);
-        if (response.data.success) {
-          setAdverts(response.data.data);
-          console.log(response.data);
-        } else {
-          console.error("Failed to fetch adverts");
-        }
-      } catch (error) {
-        console.error("Error fetching adverts:", error);
-      }
-    };
-
     fetchAdverts();
   }, []);
 
@@ -43,6 +55,8 @@ const AdCard = () => {
     // Start the countdown when the ad is clicked
     setWatched(true);
   };
+
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="relative pt-2 lg:pt-2 min-h-screen">
@@ -91,7 +105,7 @@ const AdCard = () => {
                       </span>
                     </div>
                     <a
-                      className="flex justify-center items-center bg-[#29625d] bg-opacity-80 z-10 absolute top-0 left-0 w-full h-full text-white rounded-2xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-100"
+                      className="flex justify-center items-center bg-[#29625d] bg-opacity-80 z-10 absolute top-0 left-0 w-full h-full text-white rounded-2xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-md group-hover:opacity-100"
                       href={advert.redirect} // Update with your link field from backend
                       target="_blank"
                       rel="noopener noreferrer"
@@ -116,9 +130,9 @@ const AdCard = () => {
                   <div className="flex justify-between items-center w-full pb-4 mb-auto">
                     <div className="flex items-center">
                       <div className="pr-3">
-                      <span className="ml-1 text-[18px] font-[600] text-slate-400">
-                        {advert.price} RWF
-                      </span>
+                        <span className="ml-1 text-[18px] font-[600] text-slate-400">
+                          {advert.price} RWF
+                        </span>
                       </div>
                       <div className="flex flex-1">
                         <div>
