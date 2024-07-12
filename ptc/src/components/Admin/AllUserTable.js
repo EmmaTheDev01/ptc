@@ -75,6 +75,11 @@ const AllUserTable = () => {
                         Requests
                       </p>
                     </th>
+                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
+                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                        Date
+                      </p>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -111,6 +116,11 @@ const AllUserTable = () => {
                             style={{ width: `${(user.requests || 0) * 10}%` }} // Example of a progress bar
                           ></div>
                         </div>
+                      </td>
+                      <td className="py-3 px-6 border-b border-blue-gray-50">
+                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
+                          {user.createdAt.split('T')[0]}
+                        </p>
                       </td>
                     </tr>
                   ))}
