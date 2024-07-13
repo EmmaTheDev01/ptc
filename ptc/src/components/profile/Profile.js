@@ -43,7 +43,8 @@ const Profile = () => {
   if (error) return <p>Error fetching data: {error.message}</p>;
 
   // Check if user has either "standard" or "premium" membership
-  const canAdvertise = userData?.membership === "standard" || userData?.membership === "premium";
+  const canAdvertise =
+    userData?.membership === "standard" || userData?.membership === "premium";
 
   return (
     <div className="bg-gray-100 h-full mt-6 w-[90%] ml-auto mr-auto">
@@ -127,7 +128,12 @@ const Profile = () => {
                     />
                   </svg>
                 </span>
-                <span className="tracking-wide">Current Balance</span>
+                <span className="tracking-wide">
+                  Current Balance{" "}
+                  <Link className="ml-5 text-green-500" to="/withdraw">
+                    Withdraw
+                  </Link>
+                </span>
               </div>
               <div className="text-gray-700">
                 <span className="text-2xl mt-3 font-semibold text-green-600">

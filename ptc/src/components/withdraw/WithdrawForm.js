@@ -53,9 +53,9 @@ const WithdrawForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     const { fullName, userEmail, phone, amount } = formData;
-
+  
     if (parseFloat(amount) <= 500 || parseFloat(amount) > currentBalance) {
       toast.error(
         "Invalid withdrawal amount. Please check your balance and ensure amount is greater than 500."
@@ -63,11 +63,16 @@ const WithdrawForm = () => {
       setLoading(false);
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token") || Cookies.get("token");
       const apiUrl = `${server}/payment/request`;
-
+  
+      // Ensure userId is a valid string
+      if (!userId) {
+        throw new Error("UserId is not available");
+      }
+  
       const requestData = {
         userId,
         fullName,
@@ -75,17 +80,19 @@ const WithdrawForm = () => {
         phone,
         amount: parseFloat(amount),
       };
-
+  
+      console.log('Request Data:', requestData);  // Log request data
+  
       const response = await axios.post(apiUrl, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log("Response:", response.data);
-
+  
+      console.log("Response:", response.data);  // Log the successful response
+  
       toast.success("Withdrawal request successful!");
-
+  
       // Reset form after successful submission
       e.target.reset();
       setFormData({
@@ -95,12 +102,13 @@ const WithdrawForm = () => {
         amount: "",
       });
     } catch (error) {
-      console.error("Error submitting withdrawal request:", error);
+      console.error('Error submitting withdrawal request:', error.response ? error.response.data : error.message);  // Log detailed error
       toast.error("Failed to withdraw money. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="flex justify-center mt-10">
