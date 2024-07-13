@@ -1,10 +1,8 @@
 import React from "react";
 import {
   FaFacebook,
-  FaGithub,
   FaInstagram,
   FaTwitter,
-  FaTwitch,
 } from "react-icons/fa";
 
 const sections = [
@@ -30,20 +28,18 @@ const items = [
   { name: "Facebook", icon: FaFacebook, link: "https://www.facebook.com/" },
   { name: "Instagram", icon: FaInstagram, link: "https://www.instagram.com/" },
   { name: "Twitter", icon: FaTwitter, link: "https://twitter.com/" },
-  { name: "Twitch", icon: FaTwitch, link: "https://www.twitch.tv/" },
-  { name: "Github", icon: FaGithub, link: "https://github.com/" },
 ];
 
 const Footer = () => {
   return (
-    <div className="w-full mt-24 bg-gray-200 text-gray-300 py-y px-2">
+    <div className="w-full mt-24 bg-gray-200 text-gray-300 py-16 px-2 bottom-0">
       <div className="max-w-[1240px] mx-auto grid grid-cols-2 md:grid-cols-6 border-b-2 border-gray-600 py-8">
         {sections.map((section, index) => (
           <div key={index}>
             <h6 className="font-bold uppercase pt-2 text-[#29625d]">{section.title}</h6>
             <ul>
               {section.items.map((item, i) => (
-                <li key={i} className="py-1 text-gray-700 hover:text-[#29625d]">
+                <li key={i} className="py-1 text-gray-700 hover:text-[#29625d] cursor-pointer">
                   {item}
                 </li>
               ))}

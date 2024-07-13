@@ -2,26 +2,30 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { server } from "../../utils/server";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
-  
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
-    // Fetch user profile data from backend
     const fetchData = async () => {
       try {
-        // Retrieve token from cookies (if available)
-        const token = localStorage.getItem("token") || document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
+        const token =
+          localStorage.getItem("token") ||
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("accessToken="))
+            .split("=")[1];
 
         if (token) {
           const response = await axios.get(`${server}/auth/profile`, {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           });
-          setUserData(response.data.data);  // Adjust to access the correct data field
+          setUserData(response.data.data);
         } else {
           setError(new Error("No token found"));
         }
@@ -35,9 +39,11 @@ const Profile = () => {
     fetchData();
   }, []);
 
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data: {error.message}</p>;
+
+  // Check if user has either "standard" or "premium" membership
+  const canAdvertise = userData?.membership === "standard" || userData?.membership === "premium";
 
   return (
     <div className="bg-gray-100 h-full mt-6 w-[90%] ml-auto mr-auto">
@@ -48,7 +54,10 @@ const Profile = () => {
               <div className="image overflow-hidden">
                 <img
                   className="h-full w-[100px] mx-auto"
-                  src={userData?.photo?.url || "https://cdn-icons-png.flaticon.com/512/3607/3607444.png"}
+                  src={
+                    userData?.photo?.url ||
+                    "https://cdn-icons-png.flaticon.com/512/3607/3607444.png"
+                  }
                   alt="profile"
                 />
               </div>
@@ -59,26 +68,43 @@ const Profile = () => {
                 {userData?.email || "Loading..."}
               </h3>
               <p className="text-sm text-gray-500 hover:text-gray-600 leading-6">
-                {userData?.bio || "Dynamic marketing strategist with over a decade of experience in driving brand growth and creating compelling campaigns. Passionate about leveraging data-driven insights to craft innovative solutions and build lasting client relationships."}
+                {userData?.bio ||
+                  "Dynamic marketing strategist with over a decade of experience in driving brand growth and creating compelling campaigns. Passionate about leveraging data-driven insights to craft innovative solutions and build lasting client relationships."}
               </p>
               <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                 <li className="flex items-center py-3">
                   <span>Membership</span>
                   <span className="ml-auto">
-                    <span className={`py-1 px-2 rounded text-white text-sm ${userData?.membership === "premium" ? "bg-[#DAA520]" :
-                        userData?.membership === "standard" ? "bg-[#c0c0c0]" :
-                          "bg-green-500"
-                      }`}>
+                    <span
+                      className={`py-1 px-2 rounded text-white text-sm ${
+                        userData?.membership === "premium"
+                          ? "bg-[#DAA520]"
+                          : userData?.membership === "standard"
+                          ? "bg-[#c0c0c0]"
+                          : "bg-green-500"
+                      }`}
+                    >
                       {userData?.membership || "No Membership"}
                     </span>
                   </span>
-
                 </li>
                 <li className="flex items-center py-3">
                   <span>Member since</span>
-                  <span className="ml-auto">{new Date(userData?.createdAt).toLocaleDateString() || "Loading..."}</span>
+                  <span className="ml-auto">
+                    {new Date(userData?.createdAt).toLocaleDateString() ||
+                      "Loading..."}
+                  </span>
                 </li>
               </ul>
+              {canAdvertise && ( // Render the button conditionally
+                <div className="w-full h-64 mt-2">
+                  <Link to="/advertise">
+                    <button className="bg-[#29625d] p-3 shadow-sm rounded-md hover:bg-black w-full">
+                      <span className="text-white">Advertise</span>
+                    </button>
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="my-4"></div>
           </div>
@@ -104,8 +130,15 @@ const Profile = () => {
                 <span className="tracking-wide">Current Balance</span>
               </div>
               <div className="text-gray-700">
-                <span className="text-2xl mt-3 font-semibold text-green-600"><FaArrowDown /></span>
-                <p className="text-2xl font-semibold">RWF {userData?.currentBalance > 0 ? userData?.currentBalance : userData?.currentBalance +".00"}</p>
+                <span className="text-2xl mt-3 font-semibold text-green-600">
+                  <FaArrowDown />
+                </span>
+                <p className="text-2xl font-semibold">
+                  RWF{" "}
+                  {userData?.currentBalance > 0
+                    ? userData?.currentBalance
+                    : userData?.currentBalance + ".00"}
+                </p>
               </div>
             </div>
           </div>
@@ -131,8 +164,15 @@ const Profile = () => {
                 <span className="tracking-wide">Withdrawals</span>
               </div>
               <div className="text-gray-700">
-                <span className="text-2xl mt-3 font-semibold text-red-600"><FaArrowUp /></span>
-                <p className="text-2xl font-semibold">RWF {userData?.withdrawnBalance > 0 ? userData?.withdrawnBalance : userData?.withdrawnBalance + ".00"}</p>
+                <span className="text-2xl mt-3 font-semibold text-red-600">
+                  <FaArrowUp />
+                </span>
+                <p className="text-2xl font-semibold">
+                  RWF{" "}
+                  {userData?.withdrawnBalance > 0
+                    ? userData?.withdrawnBalance
+                    : userData?.withdrawnBalance + ".00"}
+                </p>
               </div>
             </div>
           </div>

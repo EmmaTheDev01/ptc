@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { server } from '../../utils/server';
 const Table = () => {
-  const [approvedRequests, setApprovedRequests] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +21,6 @@ const Table = () => {
         });
 
         if (response.data.success) {
-          setApprovedRequests(response.data.data);
           setRequests(response.data.data); // Assuming this is how you get requests data
         } else {
           console.error('Failed to fetch approved requests');
