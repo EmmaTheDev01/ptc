@@ -214,7 +214,7 @@ const AdvertiseForm = () => {
             <input
               type="submit"
               value="Create Ad"
-              className="mt-4 w-full p-2 bg-[#29625d] hover:bg-black text-white rounded-lg cursor-pointer"
+              className="mt-4 w-[200px] float-start p-2 bg-[#29625d] hover:bg-black text-white rounded-lg cursor-pointer"
             />
           </div>
         </form>
