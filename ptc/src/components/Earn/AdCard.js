@@ -7,35 +7,67 @@ const AdCard = () => {
   const [watched, setWatched] = useState(false);
   const [timer, setTimer] = useState(30);
   const [adverts, setAdverts] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Function to fetch adverts data from backend
-  const fetchAdverts = async () => {
+  // Fetch user data from server
+  const fetchUserData = async () => {
     try {
-      // Retrieve token from localStorage or Cookies
+      const token = localStorage.getItem("token") || Cookies.get("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await axios.get(`${server}/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        setUser(response.data.data);
+        setLoading(false);
+      } else {
+        throw new Error("Failed to fetch user data");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setLoading(false);
+      setError(
+        error.response?.data?.message || error.message || "Failed to fetch user data"
+      );
+    }
+  };
+
+  // Fetch advertisements from server
+  const fetchAdvertisements = async () => {
+    try {
       const token = localStorage.getItem("token") || Cookies.get("token");
       if (!token) {
         throw new Error("No token found");
       }
 
       const response = await axios.get(`${server}/adverts/all-ads`, {
-        headers: { Authorization: `Bearer ${token}` },  // Add token to headers
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.data.success) {
         setAdverts(response.data.data);
-        console.log(response.data);
       } else {
-        console.error("Failed to fetch adverts");
+        throw new Error("Failed to fetch advertisements");
       }
     } catch (error) {
-      console.error("Error fetching adverts:", error);
-      setError(error.response?.data?.message || error.message || "Failed to fetch adverts");
+      console.error("Error fetching advertisements:", error);
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch advertisements"
+      );
     }
   };
 
   useEffect(() => {
-    fetchAdverts();
+    fetchUserData();
+    fetchAdvertisements();
   }, []);
 
   useEffect(() => {
@@ -46,16 +78,45 @@ const AdCard = () => {
       }, 1000);
     } else if (timer === 0) {
       alert("Ad Watched");
+      updateUserBalance();
     }
 
     return () => clearTimeout(countdown);
   }, [watched, timer]);
 
-  const handleWatchAd = () => {
-    // Start the countdown when the ad is clicked
-    setWatched(true);
+  // Function to update user balance
+  const updateUserBalance = async () => {
+    try {
+      const token = localStorage.getItem("token") || Cookies.get("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const userId = user._id; // Assuming user has been fetched and exists
+      const adPrice = adverts.length > 0 ? adverts[0].price : 0; // Assuming fetching first ad
+      const response = await axios.put(
+        `${server}/user/${userId}`,
+        { currentBalance: adPrice },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.data.success) {
+        setUser(response.data.data); // Update user state with new balance
+        console.log("User balance updated successfully.");
+      } else {
+        throw new Error(response.data.message || "Failed to update user balance");
+      }
+    } catch (error) {
+      console.error("Error updating user balance:", error);
+      setError(
+        error.response?.data?.message || error.message || "Failed to update user balance"
+      );
+    }
   };
 
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -74,7 +135,10 @@ const AdCard = () => {
                 >
                   <div
                     className="relative mb-4 rounded-2xl"
-                    onClick={handleWatchAd}
+                    onClick={() => {
+                      setWatched(true);
+                      setAdverts([advert]); // Set the current ad as watched
+                    }}
                   >
                     <img
                       className="max-h-80 h-[300px] w-full rounded-2xl object-cover transition-transform duration-300 transform group-hover:scale-105"
@@ -106,7 +170,7 @@ const AdCard = () => {
                     </div>
                     <a
                       className="flex justify-center items-center bg-[#29625d] bg-opacity-80 z-10 absolute top-0 left-0 w-full h-full text-white rounded-2xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-md group-hover:opacity-100"
-                      href={advert.redirect} // Update with your link field from backend
+                      href={advert.redirect}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
