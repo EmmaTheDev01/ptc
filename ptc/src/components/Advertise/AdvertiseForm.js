@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../utils/server";
-import Cookies from 'js-cookie';  // Import Cookies for token retrieval
+import Cookies from 'js-cookie';
+import { AuthContext } from "../../context/AuthContext";
 
 const AdvertiseForm = () => {
+  const { isLoggedIn } = useContext(AuthContext); // Destructure isLoggedIn from AuthContext
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
@@ -43,7 +45,7 @@ const AdvertiseForm = () => {
     }
 
     try {
-      const token = localStorage.getItem('token') || Cookies.get('token');  // Get token from localStorage or cookies
+      const token = localStorage.getItem('token') || Cookies.get('token');
       if (!token) {
         throw new Error('You are not allowed to create an ad');
       }
@@ -51,14 +53,13 @@ const AdvertiseForm = () => {
       const response = await axios.post(`${server}/adverts/create`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`  // Include Bearer token in headers
+          Authorization: `Bearer ${token}`
         },
       });
 
       if (response.status === 200) {
         toast.success("Ad created successfully!");
         navigate("/earn");
-        // Do not reload the page, React will handle the navigation
       } else {
         toast.error(`Error: ${response.data.message}`);
       }
@@ -73,6 +74,12 @@ const AdvertiseForm = () => {
     const files = Array.from(e.target.files);
     setPhoto(files);
   };
+
+  // Redirect if not logged in
+  if (!isLoggedIn) {
+    navigate('/login');
+    return null; // Or loading indicator if necessary
+  }
 
   return (
     <div className="flex justify-center flex-wrap w-full p-6">
@@ -195,7 +202,6 @@ const AdvertiseForm = () => {
               multiple
               onChange={handleImageChange}
               accept="image/*"
-              // Conditional required based on imageUrl
               required={photo.length === 0 && !imageUrl}
               name="images"
             />
