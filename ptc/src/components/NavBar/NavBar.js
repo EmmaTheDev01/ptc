@@ -1,17 +1,53 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Disclosure, Menu } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';  // Import axios for API requests
 import { AuthContext } from '../../context/AuthContext';
+import { server } from '../../utils/server';  // Assuming you have a server.js for API base URL
 
 export default function NavBar() {
   const { isLoggedIn, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const user = {
-    name: 'Tom Cook',
-    email: 'tom@NavBar.com',
-    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-DSW54utMSZ6J1F9luVr6YYDoRZ-FQYCL3w&s',
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token =
+          localStorage.getItem('token') ||
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('accessToken='))
+            .split('=')[1];
+
+        if (token) {
+          const response = await axios.get(`${server}/auth/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUser(response.data.data);  // Set user profile data from API response
+        } else {
+          throw new Error('No token found');
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchUserProfile();
+    }
+  }, [isLoggedIn]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleNavigation = (to) => {
+    navigate(to);
   };
 
   const navigation = [
@@ -23,21 +59,14 @@ export default function NavBar() {
 
   const userNavigation = [
     { name: 'Your Profile', to: '/profile' },
-    { name: 'Dashboard', to: '/dashboard' },
+    ...(user && user.role === 'admin'
+      ? [{ name: 'Dashboard', to: '/dashboard' }]
+      : [{ name: 'Advertise', to: '/advertise' }]),
     { name: 'Sign out', onClick: handleLogout },
   ];
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
-  }
-
-  function handleLogout() {
-    logout();
-    navigate('/login'); // Redirect to homepage after logout
-  }
-
-  function handleNavigation(to) {
-    navigate(to);
   }
 
   return (
@@ -87,7 +116,7 @@ export default function NavBar() {
                             <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                               <span className="absolute -inset-1.5" />
                               <span className="sr-only">Open user menu</span>
-                              <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
+                              <img className="h-8 w-8 rounded-full" src={user?.imageUrl || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'} alt="" />
                             </Menu.Button>
                           </div>
                           <Menu.Items
@@ -148,11 +177,11 @@ export default function NavBar() {
                   <div className="border-t border-gray-700 pb-3 pt-4">
                     <div className="flex items-center px-5">
                       <div className="flex-shrink-0">
-                        <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                        <img className="h-10 w-10 rounded-full" src={user?.imageUrl || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'} alt="" />
                       </div>
                       <div className="ml-3">
-                        <div className="text-base font-[900] leading-none text-gray-700">{user.name}</div>
-                        <div className="text-sm font-medium leading-none text-gray-700">{user.email}</div>
+                        <div className="text-base font-[900] leading-none text-gray-700 text-start">{user?.username}</div>
+                        <div className="text-sm font-medium leading-none text-gray-700">{user?.email}</div>
                       </div>
                       <button
                         type="button"
@@ -169,7 +198,7 @@ export default function NavBar() {
                           key={item.name}
                           as="button"
                           onClick={() => item.onClick ? item.onClick() : handleNavigation(item.to)}
-                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-700 hover:text-white"
+                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-700  hover:text-[#29635d]"
                         >
                           {item.name}
                         </Disclosure.Button>
