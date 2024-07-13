@@ -15,6 +15,7 @@ import AllRequests from './pages/dashboard/AllRequests';
 import AllUsers from './pages/dashboard/AllUsers';
 import ApprovedRequests from './pages/dashboard/ApprovedRequests';
 import ProfilePage from './pages/ProfilePage';
+import WithdrawPage from './pages/WithdrawPage';
 function App() {
   return (
     <Router>
@@ -34,7 +35,8 @@ function App() {
           <Route path='/all-ads' element={<AllAds/>} />
           <Route path='/all-users' element={<AllUsers/>} />
           <Route path='/all-requests' element={<AllRequests/>} />
-          <Route path='approved' element={<ApprovedRequests/>} />
+          <Route path='/approved' element={<ApprovedRequests/>} />
+          <Route path='/withdraw' element={<WithdrawPage/>} /> 
         </Routes>
       </div>
     </Router>
