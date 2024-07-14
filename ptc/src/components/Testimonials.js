@@ -1,56 +1,51 @@
+import React from 'react';
+
 const posts = [
   {
     id: 1,
     title: "Boost your conversion rate",
-    href: "#",
     description:
-      "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
-    date: "Mar 16, 2020",
-    datetime: "2020-03-16",
-    category: { title: "Marketing", href: "#" },
+      "The best platform for increasing ad revenue. Easy to use and highly effective. I’ve seen a significant boost in my earnings!",
+    date: "Jul 14, 2024",
+    category: { title: "Marketing" },
     author: {
-      name: "Michael Foster",
-      role: "Co-Founder / CTO",
-      href: "#",
+      name: "Emma Johnson",
+      role: "Digital Marketer",
       imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        "https://via.placeholder.com/400x400.png?text=Emma+Johnson",
     },
+    rating: 5,
   },
   {
-    id: 1,
-    title: "Boost your conversion rate",
-    href: "#",
+    id: 2,
+    title: "Excellent ad platform",
     description:
-      "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
-    date: "Mar 16, 2020",
-    datetime: "2020-03-16",
-    category: { title: "Marketing", href: "#" },
+      "Fantastic platform for anyone looking to monetize their traffic. The process is straightforward and the support is top-notch.",
+    date: "Jun 25, 2024",
+    category: { title: "Advertising" },
     author: {
-      name: "Michael Foster",
-      role: "Co-Founder / CTO",
-      href: "#",
+      name: "John Smith",
+      role: "Affiliate Marketer",
       imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        "https://via.placeholder.com/400x400.png?text=John+Smith",
     },
+    rating: 4,
   },
   {
-    id: 1,
-    title: "Boost your conversion rate",
-    href: "#",
+    id: 3,
+    title: "Great user experience",
     description:
-      "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
-    date: "Mar 16, 2020",
-    datetime: "2020-03-16",
-    category: { title: "Marketing", href: "#" },
+      "I’m really impressed with the ease of use and the results I’ve achieved with this ad platform. Highly recommend it for beginners!",
+    date: "May 10, 2024",
+    category: { title: "User Experience" },
     author: {
-      name: "Michael Foster",
-      role: "Co-Founder / CTO",
-      href: "#",
+      name: "Sophie Lee",
+      role: "Content Creator",
       imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        "https://via.placeholder.com/400x400.png?text=Sophie+Lee",
     },
+    rating: 5,
   },
-  
 ];
 
 export default function Testimonials() {
@@ -59,54 +54,58 @@ export default function Testimonials() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl sm:text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-700 sm:text-4xl">
-            Testimonials
+            What Our Users Say
           </h2>
           <p className="mt-2 text-lg leading-8 text-gray-600">
-            Learn how to grow your business with our expert advice.
+            Discover how our ad platform is helping users achieve their goals.
           </p>
         </div>
-        <div className="mx-auto mt-10 grid grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3 ">
+        <div className="mx-auto mt-10 grid grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {posts.map((post) => (
             <article
               key={post.id}
-              className="flex max-w-xl flex-col items-center justify-between"
+              className="flex max-w-xl flex-col items-center justify-between p-6 bg-gray-50 rounded-lg shadow-lg hover:bg-gray-100"
             >
-              <div className="flex items-center gap-x-4 text-xs">
-                <time dateTime={post.datetime} className="text-gray-500">
+              <div className="relative flex items-center gap-x-4 text-xs mb-4">
+                <time dateTime={post.date} className="text-gray-500">
                   {post.date}
                 </time>
-                <a
-                  href={post.category.href}
-                  className="relative z-10 rounded-full bg-gray-200 px-3 py-1.5 font-medium text-[#29625d] hover:bg-gray-500"
-                >
+                <div className="relative z-10 rounded-full bg-gray-200 px-3 py-1.5 font-medium text-[#29625d] hover:bg-gray-300">
                   {post.category.title}
-                </a>
+                </div>
               </div>
-              <div className="group relative">
-                <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-600 group-hover:text-gray-600">
-                  <a href={post.href}>
-                    <span className="absolute inset-0" />
-                    {post.title}
-                  </a>
+              <div className="group relative mb-6 text-center">
+                <h3 className="text-lg font-semibold leading-6 text-gray-600 group-hover:text-gray-700">
+                  {post.title}
                 </h3>
-                <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+                <p className="mt-4 text-sm leading-6 text-gray-600">
                   {post.description}
                 </p>
+                <div className="mt-4 flex justify-center items-center">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <svg
+                      key={i}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-5 w-5 ${i < post.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21 12 17.27z" />
+                    </svg>
+                  ))}
+                </div>
               </div>
-              <div className="relative mt-8 flex items-center gap-x-4">
+              <div className="relative flex items-center gap-x-4">
                 <img
                   src={post.author.imageUrl}
-                  alt=""
-                  className="h-10 w-10 rounded-full bg-gray-50"
+                  alt={post.author.name}
+                  className="h-12 w-12 rounded-full bg-gray-50"
                 />
                 <div className="text-sm leading-6">
-                  <p className="font-semibold text--[#29625d]">
-                    <a href={post.author.href}>
-                      <span className="absolute inset-0" />
-                      {post.author.name}
-                    </a>
+                  <p className="font-semibold text-[#29625d]">
+                    {post.author.name}
                   </p>
-                  <p className="text-[#29625d]">{post.author.role}</p>
+                  <p className="text-gray-500">{post.author.role}</p>
                 </div>
               </div>
             </article>

@@ -1,4 +1,5 @@
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
@@ -16,6 +17,7 @@ import AllUsers from './pages/dashboard/AllUsers';
 import ApprovedRequests from './pages/dashboard/ApprovedRequests';
 import ProfilePage from './pages/ProfilePage';
 import WithdrawPage from './pages/WithdrawPage';
+import AllMessages from './pages/dashboard/AllMessges';
 function App() {
   return (
     <Router>
@@ -37,6 +39,7 @@ function App() {
           <Route path='/all-requests' element={<AllRequests/>} />
           <Route path='/approved' element={<ApprovedRequests/>} />
           <Route path='/withdraw' element={<WithdrawPage/>} /> 
+          <Route path='/messages' element={<AllMessages/>} />
         </Routes>
       </div>
     </Router>
