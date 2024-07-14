@@ -4,6 +4,7 @@ import { server } from '../../utils/server';
 import Cookies from 'js-cookie';
 import { FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+
 const AllAdsTable = () => {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,14 +17,14 @@ const AllAdsTable = () => {
       if (!token) {
         throw new Error('No token found');
       }
-      
+
       await axios.delete(`${server}/adverts/${adId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       // Filter out the deleted ad from the ads array
       setAds((prevAds) => prevAds.filter(ad => ad._id !== adId));
-      toast.success("Ad deleted succesfully!");
+      toast.success("Ad deleted successfully!");
     } catch (err) {
       console.error('Error deleting ad:', err);
       setError(err.response?.data?.message || err.message || 'Failed to delete ad');
@@ -72,71 +73,73 @@ const AllAdsTable = () => {
               </div>
             </div>
             <div className="p-6">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Ad Title
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Ad Description
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Price
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Date
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Action
-                      </p>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ads.map((ad) => (
-                    <tr key={ad._id}>
-                      <td className="py-3 px-6 border-b border-blue-gray-200">
-                        <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
-                          {ad.title}
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead>
+                    <tr>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Ad Title
                         </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-200">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          {ad.desc}
+                      </th>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Ad Description
                         </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-200">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          RWF {ad.price}
+                      </th>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Price
                         </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-200">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          {new Date(ad.createdAt).toLocaleDateString()}
+                      </th>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Date
                         </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-200 text-left">
-                        <button
-                          onClick={() => handleDelete(ad._id)}  // Corrected to use ad._id
-                          className="text-red-500 hover:text-red-700 text-center"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
+                      </th>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Action
+                        </p>
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ads.map((ad) => (
+                      <tr key={ad._id}>
+                        <td className="py-3 px-6 border-b border-blue-gray-200">
+                          <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
+                            {ad.title}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 border-b border-blue-gray-200">
+                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
+                            {ad.desc}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 border-b border-blue-gray-200">
+                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
+                            RWF {ad.price}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 border-b border-blue-gray-200">
+                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
+                            {new Date(ad.createdAt).toLocaleDateString()}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 border-b border-blue-gray-200 text-left">
+                          <button
+                            onClick={() => handleDelete(ad._id)}  // Corrected to use ad._id
+                            className="text-red-500 hover:text-red-700 text-center"
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
