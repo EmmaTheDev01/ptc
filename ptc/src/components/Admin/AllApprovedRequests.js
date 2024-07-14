@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { server } from '../../utils/server';
 
 const AllApprovedRequests = () => {
   const [approvedRequests, setApprovedRequests] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     // Function to fetch approved payment requests
@@ -11,8 +13,12 @@ const AllApprovedRequests = () => {
         // Get the token from cookies or localStorage
         const token = localStorage.getItem('token') || document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
 
+        if (!token) {
+          throw new Error('No token found');
+        }
+
         // Make the API request with the token
-        const response = await axios.get('http://localhost:4000/api/v1/payment/approved', {
+        const response = await axios.get(`${server}/payment/approved`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -21,10 +27,12 @@ const AllApprovedRequests = () => {
         if (response.data.success) {
           setApprovedRequests(response.data.data);
         } else {
-          console.error('Failed to fetch approved requests');
+          console.error('Failed to fetch approved requests:', response.data.message);
+          setError(response.data.message);
         }
       } catch (error) {
-        console.error('Error fetching approved requests:', error);
+        console.error('Error fetching approved requests:', error.message);
+        setError(error.message);
       }
     };
 
@@ -47,6 +55,7 @@ const AllApprovedRequests = () => {
               </div>
             </div>
             <div className="p-6 overflow-x-auto">
+              {error && <p className="text-red-500">{error}</p>} {/* Display error message if exists */}
               <table className="w-full">
                 <thead>
                   <tr>
