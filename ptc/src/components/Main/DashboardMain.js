@@ -126,7 +126,7 @@ const DashboardMain = () => {
             </div>
             <div className="p-6 text-right">
               <p className="text-sm font-normal text-blue-gray-600">Total Withdrawals</p>
-              <h4 className="text-2xl font-semibold text-blue-gray-900">{madeWithdrawals}</h4>
+              <h4 className="text-2xl font-semibold text-blue-gray-900">RWF {madeWithdrawals}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
