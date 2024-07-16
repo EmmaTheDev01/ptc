@@ -1,6 +1,35 @@
 import React from 'react';
+import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 
 const BasicPlan = () => {
+
+  const config = {
+    public_key: '',
+    tx_ref: Date.now(),
+    amount: 30000,
+    currency: 'RWF',
+    payment_options: 'card,mobilemoney,ussd',
+    customer: {
+      email: 'worldoffictionrw@gmail.com',
+      phone_number: '0784019175',
+      name: 'Emma Habumugisha',
+    },
+    customizations: {
+      title: 'Standard Plan',
+      description: 'Payment for items in cart',
+      logo: 'https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg',
+    },
+  };
+
+  const fwConfig = {
+    ...config,
+    text: 'Get Started',
+    callback: (response) => {
+       console.log(response);
+      closePaymentModal() // this will close the modal programmatically
+    },
+    onClose: () => {},
+  };
   return (
     <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden flex flex-col h-full m-3">
       {/* Plan Header */}
@@ -70,9 +99,7 @@ const BasicPlan = () => {
       
       {/* Plan Footer */}
       <div className="px-6 pb-6">
-        <button className="w-full bg-[#29625d] text-white py-2 px-4 rounded-lg hover:bg-[#000] transition duration-300">
-          Get Started
-        </button>
+      <FlutterWaveButton {...fwConfig} className='w-full bg-[#29625d] text-white py-2 px-4 rounded-lg hover:bg-[#000] transition duration-300'/>
       </div>
     </div>
   );

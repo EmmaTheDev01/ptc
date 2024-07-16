@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 const FreePlan = () => {
   return (
     <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden flex flex-col h-full m-3">
@@ -70,9 +70,11 @@ const FreePlan = () => {
       
       {/* Plan Footer */}
       <div className="px-6 pb-6">
+        <Link to='/register'>
         <button className="w-full bg-[#29625d] text-white py-2 px-4 rounded-lg hover:bg-[#000] transition duration-300">
           Sign Up
         </button>
+        </Link>
       </div>
     </div>
   );

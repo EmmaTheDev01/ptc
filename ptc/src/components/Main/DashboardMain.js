@@ -3,13 +3,15 @@ import axios from 'axios';
 import { server } from '../../utils/server';
 import Table from '../Admin/Table';
 import { Link } from 'react-router-dom';
+
 const DashboardMain = () => {
   const [userCount, setUserCount] = useState(0);
   const [adCount, setAdCount] = useState(0);
   const [revenue, setRevenue] = useState('RWF 0.00'); // Placeholder for revenue
+  const [madeWithdrawals, setMadeWithdrawals] = useState(0);
 
   useEffect(() => {
-    // Function to fetch user count and advert count
+    // Function to fetch dashboard data
     const fetchDashboardData = async () => {
       try {
         // Get the token from cookies or localStorage
@@ -23,6 +25,14 @@ const DashboardMain = () => {
         });
         setUserCount(usersResponse.data.data.length || 0);
 
+        // Calculate revenue from currentBalance
+        const totalRevenue = usersResponse.data.data.reduce((acc, user) => acc + (user.currentBalance || 0), 0);
+        setRevenue(`RWF ${totalRevenue.toFixed(2)}`);
+
+        // Fetch total withdrawals
+        const totalWithdraws = usersResponse.data.data.reduce((acc, user) => acc + (user.withdrawnBalance || 0), 0);
+        setMadeWithdrawals(totalWithdraws);
+
         // Fetch all adverts
         const advertsResponse = await axios.get(`${server}/adverts/all-ads`, {
           headers: {
@@ -31,12 +41,13 @@ const DashboardMain = () => {
         });
         setAdCount(advertsResponse.data.data.length || 0);
 
-        const revenueResponse = await axios.get('http://localhost:4000/api/v1/revenue', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setRevenue(`RWF ${revenueResponse.data.revenue.toFixed(2)}`);
+        // Optionally, you could fetch revenue data from another endpoint if needed
+        // const revenueResponse = await axios.get('http://localhost:4000/api/v1/revenue', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        // setRevenue(`RWF ${revenueResponse.data.revenue.toFixed(2)}`);
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -60,7 +71,7 @@ const DashboardMain = () => {
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Revenue</p>
+              <p className="text-sm font-normal text-blue-gray-600">User Earnings</p>
               <h4 className="text-2xl font-semibold text-blue-gray-900">{revenue}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
@@ -114,8 +125,8 @@ const DashboardMain = () => {
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Payment Requests</p>
-              <h4 className="text-2xl font-semibold text-blue-gray-900">RWF 0.00</h4>
+              <p className="text-sm font-normal text-blue-gray-600">Total Withdrawals</p>
+              <h4 className="text-2xl font-semibold text-blue-gray-900">{madeWithdrawals}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
