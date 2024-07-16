@@ -10,6 +10,7 @@ const DashboardMain = () => {
   const [revenue, setRevenue] = useState('RWF 0.00'); // Placeholder for revenue
   const [madeWithdrawals, setMadeWithdrawals] = useState(0);
   const [dailyUserCount, setDailyUserCount] = useState(0);  // State for daily user count
+  const [dailyPaymentRequests, setDailyPaymentRequests] = useState(0); // State for daily payment requests count
 
   useEffect(() => {
     // Function to fetch dashboard data
@@ -50,6 +51,14 @@ const DashboardMain = () => {
         });
         setDailyUserCount(dailyUserResponse.data.data || 0);
 
+        // Fetch daily payment request count
+        const dailyPaymentRequestsResponse = await axios.get(`${server}/payment/daily-stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setDailyPaymentRequests(dailyPaymentRequestsResponse.data.data || 0);
+
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       }
@@ -61,7 +70,7 @@ const DashboardMain = () => {
   return (
     <div className="min-h-screen bg-gray-100 w-full">
       <div className="container mx-auto p-4">
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 mb-8 mt-5">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mb-8 mt-5">
           {/* Revenue Card */}
           <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
             <div className="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
@@ -104,7 +113,7 @@ const DashboardMain = () => {
           <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
             <div className="bg-gradient-to-tr from-green-600 to-green-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-8 h-8">
-                <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
+                <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM12 4.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM12 20.25c-4.82 0-8.75-2.926-8.75-6.75S7.18 6.75 12 6.75c4.82 0 8.75 2.926 8.75 6.75s-3.93 6.75-8.75 6.75zM12 10.875a.75.75 0 00-.75.75v1.5a.75.75 0 001.5 0v-1.5a.75.75 0 00-.75-.75zM12 16.125a.75.75 0 00-.75.75v.008a.75.75 0 001.5 0V16.875a.75.75 0 00-.75-.75z"></path>
               </svg>
             </div>
             <div className="p-6 text-right">
@@ -113,54 +122,70 @@ const DashboardMain = () => {
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-              <Link to="/all-ads" className="text-green-500">View Details</Link>
+                <Link to="/all-adverts" className="text-green-500">View Adverts</Link>
               </p>
             </div>
           </div>
 
-          {/* Payment Requests Card */}
+          {/* Daily Payment Requests Card */}
           <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
-            <div className="bg-gradient-to-tr from-orange-600 to-orange-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
+            <div className="bg-gradient-to-tr from-purple-600 to-purple-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-8 h-8">
-                <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"></path>
+                <path d="M11.25 9.75v2.25a.75.75 0 001.5 0V9.75a.75.75 0 00-1.5 0zM11.25 14.625a.75.75 0 00-.75.75v.008a.75.75 0 001.5 0v-.008a.75.75 0 00-.75-.75zM12 3a9 9 0 00-9 9v1.65a6.735 6.735 0 00-1.875 4.275c0 1.354 1.096 2.45 2.45 2.45h18.75c1.354 0 2.45-1.096 2.45-2.45a6.735 6.735 0 00-1.875-4.275V12a9 9 0 00-9-9zm6 12.5H6v-1.5h12v1.5z"></path>
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Total Withdrawals</p>
-              <h4 className="text-2xl font-semibold text-blue-gray-900">RWF {madeWithdrawals}</h4>
+              <p className="text-sm font-normal text-blue-gray-600">Payment Requests</p>
+              <h4 className="text-2xl font-semibold text-blue-gray-900">{dailyPaymentRequests}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-                <strong className="text-green-500">0%</strong> Since Launch
+                <Link to="/all-payment-requests" className="text-green-500">View Requests</Link>
               </p>
             </div>
           </div>
 
-          {/* Daily User Count Card */}
+          {/* Daily Users Card */}
           <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
-            <div className="bg-gradient-to-tr from-yellow-600 to-yellow-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
+            <div className="bg-gradient-to-tr from-teal-600 to-teal-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-8 h-8">
-                <path d="M12 2.25c-5.486 0-9.75 4.264-9.75 9.75s4.264 9.75 9.75 9.75 9.75-4.264 9.75-9.75S17.486 2.25 12 2.25zm0 16.5c-3.726 0-6.75-3.024-6.75-6.75s3.024-6.75 6.75-6.75 6.75 3.024 6.75 6.75-3.024 6.75-6.75 6.75zm-1.5-8.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm0-1.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"></path>
+                <path fillRule="evenodd" d="M9.25 4.5a.75.75 0 01.75-.75h4a.75.75 0 01.75.75V6h2.25a.75.75 0 01.75.75V9a.75.75 0 01-.75.75H17v2.25a.75.75 0 01-.75.75h-2.25v2.25a.75.75 0 01-.75.75h-4a.75.75 0 01-.75-.75V13H7.75a.75.75 0 01-.75-.75V9.75H4.75a.75.75 0 01-.75-.75V6a.75.75 0 01.75-.75h2.25V4.5zM11 6.75h2v2.25h-2V6.75zm0 5.25v2.25h2V12z" clipRule="evenodd"></path>
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Daily Signups</p>
+              <p className="text-sm font-normal text-blue-gray-600">Daily Users</p>
               <h4 className="text-2xl font-semibold text-blue-gray-900">{dailyUserCount}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-                <strong className="text-green-500">+5%</strong> Since Yesterday
+                <Link to="/daily-users" className="text-green-500">View Users</Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Withdrawals Card */}
+          <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
+            <div className="bg-gradient-to-tr from-orange-600 to-orange-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-8 h-8">
+                <path d="M3 2.25a.75.75 0 01.75-.75h16.5a.75.75 0 01.75.75v14.25a.75.75 0 01-.75.75H15v2.25a.75.75 0 01-1.5 0v-2.25H10.5v2.25a.75.75 0 01-1.5 0v-2.25H3a.75.75 0 01-.75-.75V2.25zM5.25 3v12h13.5V3H5.25z"></path>
+              </svg>
+            </div>
+            <div className="p-6 text-right">
+              <p className="text-sm font-normal text-blue-gray-600">Total Withdrawals</p>
+              <h4 className="text-2xl font-semibold text-blue-gray-900">{madeWithdrawals}</h4>
+            </div>
+            <div className="border-t border-blue-gray-50 p-4">
+              <p className="text-base font-normal text-blue-gray-600">
+                <Link to="/all-withdrawals" className="text-green-500">View Withdrawals</Link>
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          {/* Made requests table */}
-          <Table/>
-        </div>
+        {/* Data Table */}
+        <Table />
       </div>
     </div>
   );
-}
+};
 
 export default DashboardMain;
