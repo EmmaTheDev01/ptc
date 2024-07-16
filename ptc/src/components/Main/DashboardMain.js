@@ -9,6 +9,7 @@ const DashboardMain = () => {
   const [adCount, setAdCount] = useState(0);
   const [revenue, setRevenue] = useState('RWF 0.00'); // Placeholder for revenue
   const [madeWithdrawals, setMadeWithdrawals] = useState(0);
+  const [dailyUserCount, setDailyUserCount] = useState(0);  // State for daily user count
 
   useEffect(() => {
     // Function to fetch dashboard data
@@ -41,13 +42,13 @@ const DashboardMain = () => {
         });
         setAdCount(advertsResponse.data.data.length || 0);
 
-        // Optionally, you could fetch revenue data from another endpoint if needed
-        // const revenueResponse = await axios.get('http://localhost:4000/api/v1/revenue', {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // });
-        // setRevenue(`RWF ${revenueResponse.data.revenue.toFixed(2)}`);
+        // Fetch daily user count
+        const dailyUserResponse = await axios.get(`${server}/user/daily-stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setDailyUserCount(dailyUserResponse.data.data || 0);
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -60,7 +61,7 @@ const DashboardMain = () => {
   return (
     <div className="min-h-screen bg-gray-100 w-full">
       <div className="container mx-auto p-4">
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 mb-8 mt-5">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 mb-8 mt-5">
           {/* Revenue Card */}
           <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
             <div className="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
@@ -131,6 +132,24 @@ const DashboardMain = () => {
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
                 <strong className="text-green-500">0%</strong> Since Launch
+              </p>
+            </div>
+          </div>
+
+          {/* Daily User Count Card */}
+          <div className="relative flex flex-col bg-white text-gray-700 shadow-md rounded-xl transition-transform transform hover:scale-105">
+            <div className="bg-gradient-to-tr from-yellow-600 to-yellow-400 text-white p-4 absolute top-3 left-2 right-0 -mt-8 flex items-center justify-center w-16 h-16 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-8 h-8">
+                <path d="M12 2.25c-5.486 0-9.75 4.264-9.75 9.75s4.264 9.75 9.75 9.75 9.75-4.264 9.75-9.75S17.486 2.25 12 2.25zm0 16.5c-3.726 0-6.75-3.024-6.75-6.75s3.024-6.75 6.75-6.75 6.75 3.024 6.75 6.75-3.024 6.75-6.75 6.75zm-1.5-8.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm0-1.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"></path>
+              </svg>
+            </div>
+            <div className="p-6 text-right">
+              <p className="text-sm font-normal text-blue-gray-600">Daily Signups</p>
+              <h4 className="text-2xl font-semibold text-blue-gray-900">{dailyUserCount}</h4>
+            </div>
+            <div className="border-t border-blue-gray-50 p-4">
+              <p className="text-base font-normal text-blue-gray-600">
+                <strong className="text-green-500">+5%</strong> Since Yesterday
               </p>
             </div>
           </div>
