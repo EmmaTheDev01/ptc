@@ -106,7 +106,12 @@ const AdCard = () => {
       return; // Prevent re-watching the same ad
     }
 
-    setWatchedAds((prevWatchedAds) => [...prevWatchedAds, advert._id]);
+    setWatchedAds((prevWatchedAds) => {
+      const updatedWatchedAds = [...prevWatchedAds, advert._id];
+      localStorage.setItem('watchedAds', JSON.stringify(updatedWatchedAds));
+      return updatedWatchedAds;
+    });
+
     setAdUrl(advert.redirect); // Store the ad URL
     setAdViewed(true); // Mark ad as viewed
     setStartTime(Date.now()); // Track when the ad view started
@@ -211,6 +216,10 @@ const AdCard = () => {
   useEffect(() => {
     fetchUserData();
     fetchAdvertisements();
+
+    // Load watched ads from localStorage
+    const storedWatchedAds = JSON.parse(localStorage.getItem('watchedAds')) || [];
+    setWatchedAds(storedWatchedAds);
   }, []);
 
   // Helper function to get token from local storage or cookies
