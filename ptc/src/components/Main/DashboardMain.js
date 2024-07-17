@@ -49,7 +49,7 @@ const DashboardMain = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setDailyUserCount(dailyUserResponse.data.data || 0);
+        setDailyUserCount(dailyUserResponse.data.dailyUserCount);
 
         // Fetch daily payment request count
         const dailyPaymentRequestsResponse = await axios.get(`${server}/payment/daily-stats`, {
@@ -57,10 +57,10 @@ const DashboardMain = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setDailyPaymentRequests(dailyPaymentRequestsResponse.data.data || 0);
+        setDailyPaymentRequests(dailyPaymentRequestsResponse.data.data);
 
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error('Error fetching dashboard data:', error.message);
       }
     };
 
@@ -135,12 +135,12 @@ const DashboardMain = () => {
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Payment Requests</p>
+              <p className="text-sm font-normal text-blue-gray-600">Today's Requests</p>
               <h4 className="text-2xl font-semibold text-blue-gray-900">{dailyPaymentRequests}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-                <Link to="/all-payment-requests" className="text-green-500">View Requests</Link>
+                <Link to="/all-requests" className="text-green-500">View Requests</Link>
               </p>
             </div>
           </div>
@@ -153,12 +153,12 @@ const DashboardMain = () => {
               </svg>
             </div>
             <div className="p-6 text-right">
-              <p className="text-sm font-normal text-blue-gray-600">Daily Users</p>
+              <p className="text-sm font-normal text-blue-gray-600">Today's Users</p>
               <h4 className="text-2xl font-semibold text-blue-gray-900">{dailyUserCount}</h4>
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-                <Link to="/daily-users" className="text-green-500">View Users</Link>
+                <Link to="/all-users" className="text-green-500">View Users</Link>
               </p>
             </div>
           </div>
@@ -176,7 +176,7 @@ const DashboardMain = () => {
             </div>
             <div className="border-t border-blue-gray-50 p-4">
               <p className="text-base font-normal text-blue-gray-600">
-                <Link to="/all-withdrawals" className="text-green-500">View Withdrawals</Link>
+                <Link to="/approved" className="text-green-500">View Withdrawals</Link>
               </p>
             </div>
           </div>

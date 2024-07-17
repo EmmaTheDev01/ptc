@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AdCard = () => {
-  const [watched, setWatched] = useState(false);
+  const [watchedAds, setWatchedAds] = useState([]);
   const [timer, setTimer] = useState(30);
   const [adverts, setAdverts] = useState([]);
   const [user, setUser] = useState(null);
@@ -102,8 +102,11 @@ const AdCard = () => {
 
   // Handle ad view actions
   const handleAdView = (advert) => {
-    setWatched(true);
-    setAdverts([advert]);
+    if (watchedAds.includes(advert._id)) {
+      return; // Prevent re-watching the same ad
+    }
+
+    setWatchedAds((prevWatchedAds) => [...prevWatchedAds, advert._id]);
     setAdUrl(advert.redirect); // Store the ad URL
     setAdViewed(true); // Mark ad as viewed
     setStartTime(Date.now()); // Track when the ad view started
@@ -142,7 +145,7 @@ const AdCard = () => {
     let countdown;
 
     const performAdActions = async () => {
-      if (watched && timer > 0) {
+      if (adViewed && timer > 0) {
         updateFaviconAndTitle(timer);
         countdown = setTimeout(() => {
           setTimer((prevTimer) => prevTimer - 1);
@@ -167,7 +170,7 @@ const AdCard = () => {
         }
 
         // Reset states after timer ends
-        setWatched(false);
+        setAdViewed(false);
         setTimer(30);
         setStartTime(null);
       }
@@ -176,7 +179,7 @@ const AdCard = () => {
     performAdActions();
 
     return () => clearTimeout(countdown);
-  }, [watched, timer, adViewed, adUrl, updateUserBalance]);
+  }, [adViewed, timer, adUrl, updateUserBalance]);
 
   // Handle visibility change
   useEffect(() => {
@@ -187,7 +190,7 @@ const AdCard = () => {
         if (pageLeftTime) {
           const timeSpentAway = (Date.now() - pageLeftTime) / 1000;
           if (timeSpentAway < 30) {
-            setWatched(false);
+            setAdViewed(false);
             setTimer(30);
             setStartTime(null);
             balanceUpdated.current = false;
@@ -233,7 +236,9 @@ const AdCard = () => {
               {adverts.map((advert) => (
                 <article
                   key={advert._id}
-                  className="bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col"
+                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${
+                    watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
+                  }`}
                 >
                   <div
                     className="relative mb-4 rounded-2xl flex-grow"
