@@ -33,7 +33,7 @@ const BasicPlan = () => {
   return (
     <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden flex flex-col h-full m-3">
       {/* Plan Header */}
-      <div className="px-6 py-4 bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white">
+      <div className="px-6 py-4 bg-gradient-to-r from-[#29625d] to-green-700 text-white">
         <h2 className="text-2xl font-semibold mb-2">Standard Plan</h2>
         <p className="text-white mb-4">Perfect for individuals who are just getting started.</p>
         <div className="text-center mb-4">

@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Disclosure, Menu } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';  // Import axios for API requests
+import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
-import { server } from '../../utils/server';  // Assuming you have a server.js for API base URL
+import { server } from '../../utils/server';
 
 export default function NavBar() {
   const { isLoggedIn, logout } = useContext(AuthContext);
@@ -137,6 +137,31 @@ export default function NavBar() {
                                 )}
                               </Menu.Item>
                             ))}
+
+                            {/* Conditional Upgrade Button */}
+                            {user && user.membership === 'basic' && (
+                              <Menu.Item>
+                                <button
+                                  onClick={() => handleNavigation('/upgrade')}
+                                  className="block px-4 py-2 text-sm text-red-500 w-full text-left"
+                                >
+                                  Upgrade to Pro
+                                </button>
+                              </Menu.Item>
+                            )}
+
+                            {/* Premium and Standard Membership Text */}
+                            {user && (
+                              <Menu.Item>
+                                <div className={classNames(
+                                  'block px-4 py-2 text-sm w-full text-left',
+                                  user.membership === 'premium' ? 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white' : 'bg-gradient-to-r from-[#29625d] to-green-700 text-white'
+                                )}>
+                                  {user.membership === 'premium' ? 'Premium Member' : 'Standard Member'}
+                                </div>
+                              </Menu.Item>
+                            )}
+
                           </Menu.Items>
                         </Menu>
                       </div>
@@ -203,6 +228,31 @@ export default function NavBar() {
                           {item.name}
                         </Disclosure.Button>
                       ))}
+
+                      {/* Conditional Upgrade Button */}
+                      {user && user.membership === 'basic' && (
+                        <Disclosure.Button
+                          as="button"
+                          onClick={() => handleNavigation('/plans')}
+                          className="block rounded-md px-3 py-2 text-base font-medium text-red-500 hover:text-red-700"
+                        >
+                          Upgrade to Pro
+                        </Disclosure.Button>
+                      )}
+
+                      {/* Premium and Standard Membership Text */}
+                      {user && (
+                        <Disclosure.Button
+                          as="button"
+                          className={classNames(
+                            'block rounded-md px-3 py-2 text-base font-medium',
+                            user.membership === 'premium' ? 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white' : 'bg-gradient-to-r from-[#29625d] to-green-700 text-white'
+                          )}
+                        >
+                          {user.membership === 'premium' ? 'Premium Member' : 'Standard Member'}
+                        </Disclosure.Button>
+                      )}
+
                     </div>
                   </div>
                 )}

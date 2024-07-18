@@ -62,8 +62,8 @@ const AdCard = () => {
       console.error("Error fetching advertisements:", error);
       setError(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to fetch advertisements"
+        error.message ||
+        "Failed to fetch advertisements"
       );
     }
   };
@@ -245,9 +245,8 @@ const AdCard = () => {
               {adverts.map((advert) => (
                 <article
                   key={advert._id}
-                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${
-                    watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
-                  }`}
+                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
+                    }`}
                 >
                   <div
                     className="relative mb-4 rounded-2xl flex-grow"
@@ -310,7 +309,8 @@ const AdCard = () => {
                   <h3 className="font-medium text-lg text-center leading-6">
                     <a
                       href={advert.redirect}
-                      className="block text-gray-800 hover:text-[#29625d] transition-colors duration-200"
+                      target="_blank"
+                      className="block text-gray-800 hover:text-[#29625d] transition-colors duration-200" rel="noreferrer"
                     >
                       {advert.title}
                     </a>

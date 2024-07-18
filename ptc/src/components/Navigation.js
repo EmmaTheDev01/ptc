@@ -147,7 +147,7 @@ export default function Navbar() {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
-                to="/get-started"
+                to="/login"
                 className="rounded-md bg-[#29625d] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#fed592] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
               >
                 Get started
