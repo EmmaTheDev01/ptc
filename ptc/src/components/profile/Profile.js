@@ -77,13 +77,12 @@ const Profile = () => {
                   <span>Membership</span>
                   <span className="ml-auto">
                     <span
-                      className={`py-1 px-2 rounded text-white text-sm ${
-                        userData?.membership === "premium"
+                      className={`py-1 px-2 rounded text-white text-sm ${userData?.membership === "premium"
                           ? "bg-[#DAA520]"
                           : userData?.membership === "standard"
-                          ? "bg-[#c0c0c0]"
-                          : "bg-green-500"
-                      }`}
+                            ? "bg-[#c0c0c0]"
+                            : "bg-green-500"
+                        }`}
                     >
                       {userData?.membership || "No Membership"}
                     </span>
@@ -98,7 +97,7 @@ const Profile = () => {
                 </li>
               </ul>
               {canAdvertise && ( // Render the button conditionally
-                <div className="w-full h-64 mt-2">
+                <div className="w-full mt-4">
                   <Link to="/advertise">
                     <button className="bg-[#29625d] p-3 shadow-sm rounded-md hover:bg-black w-full">
                       <span className="text-white">Advertise</span>
@@ -109,33 +108,31 @@ const Profile = () => {
             </div>
             <div className="my-4"></div>
           </div>
-          <div className="w-full md:w-9/12 mx-2 h-64">
-            <div className="bg-white p-3 shadow-sm rounded-sm">
-              <div className="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
-                <span className="text-green-500">
-                  <svg
-                    className="h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-6 18h6a2 2 0 002-2v-5a2 2 0 00-2-2h-6a2 2 0 00-2 2v5a2 2 0 002 2zM9 3h6"
-                    />
-                  </svg>
-                </span>
-                <span className="tracking-wide">
-                  Current Balance{" "}
-                  <Link className="ml-5 text-green-500" to="/withdraw">
-                    Withdraw
-                  </Link>
-                </span>
+          <div className="w-full md:w-9/12 md:mx-2 flex flex-col">
+            <div className="bg-white p-3 shadow-sm rounded-sm mb-4">
+              <div className="flex items-center justify-between font-semibold text-gray-900">
+                <div className="flex items-center">
+                  <span className="text-green-500">
+                    <svg
+                      className="h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-6 18h6a2 2 0 002-2v-5a2 2 0 00-2-2h-6a2 2 0 00-2 2v5a2 2 0 002 2zM9 3h6"
+                      />
+                    </svg>
+                  </span>
+                  <span className="ml-2">Current Balance</span>
+                </div>
+                <div></div>
               </div>
-              <div className="text-gray-700">
+              <div className="text-gray-700 m-3">
                 <span className="text-2xl mt-3 font-semibold text-green-600">
                   <FaArrowDown />
                 </span>
@@ -146,30 +143,35 @@ const Profile = () => {
                     : userData?.currentBalance + ".00"}
                 </p>
               </div>
+              <Link to="/withdraw">
+                <button className="bg-[#29625d] hover:bg-black text-white py-1 px-3 rounded-md mt-3 md:mt-0">
+                  Withdraw
+                </button>
+              </Link>
             </div>
-          </div>
-          <div className="w-full md:w-9/12 mx-2 h-64">
             <div className="bg-white p-3 shadow-sm rounded-sm">
-              <div className="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
-                <span className="text-green-500">
-                  <svg
-                    className="h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-6 18h6a2 2 0 002-2v-5a2 2 0 00-2-2h-6a2 2 0 00-2 2v5a2 2 0 002 2zM9 3h6"
-                    />
-                  </svg>
-                </span>
-                <span className="tracking-wide">Withdrawals</span>
+              <div className="flex items-center justify-between font-semibold text-gray-900">
+                <div className="flex items-center">
+                  <span className="text-red-500">
+                    <svg
+                      className="h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-6 18h6a2 2 0 002-2v-5a2 2 0 00-2-2h-6a2 2 0 00-2 2v5a2 2 0 002 2zM9 3h6"
+                      />
+                    </svg>
+                  </span>
+                  <span className="ml-2">Withdrawals</span>
+                </div>
               </div>
-              <div className="text-gray-700">
+              <div className="text-gray-700 m-3">
                 <span className="text-2xl mt-3 font-semibold text-red-600">
                   <FaArrowUp />
                 </span>

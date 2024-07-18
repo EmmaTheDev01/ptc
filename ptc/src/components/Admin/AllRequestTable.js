@@ -22,11 +22,16 @@ const AllRequestTable = () => {
         });
 
         if (response.data.success) {
-          // Update requests to include date
-          const requestsWithData = response.data.data.map(request => ({
+          // Map and format requests with date
+          let requestsWithData = response.data.data.map(request => ({
             ...request,
             createdAt: new Date(request.createdAt).toLocaleDateString('en-US'), // Format the date as needed
           }));
+
+          // Sort requests by date from newest to oldest
+          requestsWithData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+          // Update state with sorted requests
           setRequests(requestsWithData);
         } else {
           console.error('Failed to fetch requests:', response.data.message);

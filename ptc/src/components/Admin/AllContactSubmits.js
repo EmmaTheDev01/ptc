@@ -23,7 +23,10 @@ const AllContactSubmits = () => {
           },
         });
 
-        setContacts(response.data.data);
+        // Sort contacts by createdAt date from newest to oldest
+        const sortedContacts = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setContacts(sortedContacts);
         setLoading(false);
       } catch (err) {
         setError(err);

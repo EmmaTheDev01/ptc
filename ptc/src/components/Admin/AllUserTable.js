@@ -25,7 +25,11 @@ const AllUserTable = () => {
         });
 
         console.log('API Response:', response.data); // Log the entire response
-        setUsers(response.data.data);
+
+        // Sort users by createdAt date from newest to oldest
+        const sortedUsers = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setUsers(sortedUsers);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -36,21 +40,28 @@ const AllUserTable = () => {
     fetchUsers();
   }, []);
 
-  const handleMembershipFilter = membership => {
-    setSelectedMembership(membership === selectedMembership ? null : membership); // Toggle filter on/off
+  const handleMembershipFilter = (membership) => {
+    setSelectedMembership((prevMembership) =>
+      prevMembership === membership ? null : membership
+    ); // Toggle filter on/off
   };
 
-  if (loading) return <p className='w-auto ml-auto mr-auto mt-4'>Loading...</p>;
-  if (error) return <p className='w-auto ml-auto mr-auto mt-4'>Error fetching users: {error.message}</p>;
+  if (loading) return <p className="w-auto ml-auto mr-auto mt-4">Loading...</p>;
+  if (error)
+    return (
+      <p className="w-auto ml-auto mr-auto mt-4">
+        Error fetching users: {error.message}
+      </p>
+    );
 
   // Filter users based on selected membership
   const filteredUsers = selectedMembership
-    ? users.filter(user => user.membership === selectedMembership)
+    ? users.filter((user) => user.membership === selectedMembership)
     : users;
 
   return (
-    <div className='w-full'>
-      <section className='p-6 m-2 w-full'>
+    <div className="w-full">
+      <section className="p-6 m-2 w-full">
         <div className="mb-4 w-full">
           <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2 w-full">
             <div className="relative bg-clip-border rounded-xl overflow-hidden bg-transparent text-gray-700 shadow-none m-0 flex items-center justify-between p-6">
@@ -64,25 +75,41 @@ const AllUserTable = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <button
-                  className={`text-sm font-medium rounded-lg px-3 py-1 ${selectedMembership === 'premium' ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  className={`text-sm font-medium rounded-lg px-3 py-1 ${
+                    selectedMembership === 'premium'
+                      ? 'bg-yellow-500 text-white'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
                   onClick={() => handleMembershipFilter('premium')}
                 >
                   Premium
                 </button>
                 <button
-                  className={`text-sm font-medium rounded-lg px-3 py-1 ${selectedMembership === 'standard' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  className={`text-sm font-medium rounded-lg px-3 py-1 ${
+                    selectedMembership === 'standard'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
                   onClick={() => handleMembershipFilter('standard')}
                 >
                   Standard
                 </button>
                 <button
-                  className={`text-sm font-medium rounded-lg px-3 py-1 ${selectedMembership === 'basic' ? 'bg-gray-300 text-gray-600' : 'bg-gray-200 text-gray-700'}`}
+                  className={`text-sm font-medium rounded-lg px-3 py-1 ${
+                    selectedMembership === 'basic'
+                      ? 'bg-gray-300 text-gray-600'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
                   onClick={() => handleMembershipFilter('basic')}
                 >
                   Free
                 </button>
                 <button
-                  className={`text-sm font-medium rounded-lg px-3 py-1 ${!selectedMembership ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  className={`text-sm font-medium rounded-lg px-3 py-1 ${
+                    !selectedMembership
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-700'
+                  }`}
                   onClick={() => handleMembershipFilter(null)}
                 >
                   Clear Filter
@@ -126,7 +153,7 @@ const AllUserTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map(user => (
+                  {filteredUsers.map((user) => (
                     <tr key={user._id}>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
                         <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
@@ -139,7 +166,11 @@ const AllUserTable = () => {
                         </p>
                       </td>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className={`block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start ${getMembershipColor(user.membership)}`}>
+                        <p
+                          className={`block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start ${getMembershipColor(
+                            user.membership
+                          )}`}
+                        >
                           {getUserMembershipLabel(user.membership)}
                         </p>
                       </td>
@@ -150,7 +181,9 @@ const AllUserTable = () => {
                         <div className="flex flex-start bg-blue-gray-50 overflow-hidden w-full rounded-sm font-sans text-xs font-medium h-1">
                           <div
                             className="flex justify-center items-center h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white"
-                            style={{ width: `${(user.currentBalance || 0) * 10}%` }} // Example of a progress bar
+                            style={{
+                              width: `${(user.currentBalance || 0) * 10}%`,
+                            }} // Example of a progress bar
                           ></div>
                         </div>
                       </td>
@@ -161,7 +194,9 @@ const AllUserTable = () => {
                         <div className="flex flex-start bg-blue-gray-50 overflow-hidden w-full rounded-sm font-sans text-xs font-medium h-1">
                           <div
                             className="flex justify-center items-center h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white"
-                            style={{ width: `${(user.requests || 0) * 10}%` }} // Example of a progress bar
+                            style={{
+                              width: `${(user.requests || 0) * 10}%`,
+                            }} // Example of a progress bar
                           ></div>
                         </div>
                       </td>
@@ -182,7 +217,7 @@ const AllUserTable = () => {
   );
 };
 
-const getMembershipColor = membership => {
+const getMembershipColor = (membership) => {
   switch (membership) {
     case 'premium':
       return 'p-2 bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white rounded-lg';
@@ -196,7 +231,7 @@ const getMembershipColor = membership => {
   }
 };
 
-const getUserMembershipLabel = membership => {
+const getUserMembershipLabel = (membership) => {
   switch (membership) {
     case 'premium':
       return 'Premium Member';

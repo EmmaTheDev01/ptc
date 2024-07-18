@@ -42,8 +42,11 @@ const AllAdsTable = () => {
         const response = await axios.get(`${server}/adverts/all-ads`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log('API Response:', response.data); // Log the response to check its structure
-        setAds(response.data.data); // Assuming response.data.data contains array of ads with _id
+
+        // Sort ads by createdAt date from newest to oldest
+        const sortedAds = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setAds(sortedAds);
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || err.message || 'Failed to fetch ads');
@@ -129,7 +132,7 @@ const AllAdsTable = () => {
                         </td>
                         <td className="py-3 px-6 border-b border-blue-gray-200 text-left">
                           <button
-                            onClick={() => handleDelete(ad._id)}  // Corrected to use ad._id
+                            onClick={() => handleDelete(ad._id)}
                             className="text-red-500 hover:text-red-700 text-center"
                           >
                             <FaTrash />
