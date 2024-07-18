@@ -58,8 +58,9 @@ const Blog = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold mb-2 text-gray-800">{post.title}</h2>
-                <p className="mt-2 text-gray-600 text-start">{post.content}</p>
-                <p className="text-start mt-5 font-[12px] text-gray-700 font-[500]">{post.date}</p>
+                <p className="text-[#29625d] text-start font-[500]">{post.author}</p>
+                <p className="mt-4 text-gray-600 text-start">{post.content}</p>
+                <p className="text-start mt-5 text-[12px] text-gray-700 font-[500]">{post.date}</p>
               </div>
             </div>
           ))}

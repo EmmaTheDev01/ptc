@@ -52,11 +52,11 @@ export default function Pricing() {
             <div className="rounded-2xl bg-white py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
               <div className="mx-auto max-w-xs px-8">
                 <p className="text-base font-semibold text-gray-600">
-                  Pay once, own it forever
+                  Get a monthly membership
                 </p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
-                    20,000
+                    35,000
                   </span>
                   <span className="text-sm font-semibold leading-6 tracking-wide text-[#29625d]">
                     RWF
@@ -65,7 +65,7 @@ export default function Pricing() {
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Invoices and receipts available for easy company reimbursement
                 </p>
-                <Link to="/login" className="mt-10 block w-full rounded-md bg-[#29625d] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#29625d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline--[#29625d]"
+                <Link to="/get-started" className="mt-10 block w-full rounded-md bg-[#29625d] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#29625d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline--[#29625d]"
                 >
                   Get access
                 </Link>
@@ -76,11 +76,11 @@ export default function Pricing() {
             <div className="rounded-2xl bg-white py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
               <div className="mx-auto max-w-xs px-8">
                 <p className="text-base font-semibold text-gray-600">
-                  Pay once, own it forever
+                  Get a monthly subscription
                 </p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
-                    30,000
+                    90,000
                   </span>
                   <span className="text-sm font-semibold leading-6 tracking-wide text-[#29625d]">
                     RWF
@@ -90,7 +90,7 @@ export default function Pricing() {
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Invoices and receipts available for easy company reimbursement
                 </p>
-                <Link to="/login" className="mt-10 block w-full rounded-md bg-[#29625d] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#29625d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline--[#29625d]"
+                <Link to="/get-started" className="mt-10 block w-full rounded-md bg-[#29625d] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#29625d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline--[#29625d]"
                 >
                   Get access
                 </Link>

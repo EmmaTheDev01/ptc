@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import NavBar from '../components/NavBar/NavBar';
 import FreePlan from '../components/plans/FreePlan';
 import BasicPlan from '../components/plans/BasicPlan';
 import Premium from '../components/plans/Premium';
 import Footer from '../components/Footer';
+import { AuthContext } from '../context/AuthContext';
 
 const Plans = () => {
+  const {isLoggedIn} = useContext(AuthContext);
+
+  if (!isLoggedIn) {
+    window.location.href = '/login';
+    return (
+      <>
+        <NavBar />
+        <div className="bg-white py-12 px-6 sm:py-16 sm:px-12 text-center">
+          <h1 className="text-4xl font-bold leading-tight text-gray-800 sm:text-5xl">
+            Please Log In
+          </h1>
+          <p className="mt-4 text-lg text-gray-600">
+            You need to be logged in to view this page.
+          </p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+  
   return (
     <div>
       <NavBar />

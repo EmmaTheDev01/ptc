@@ -142,8 +142,8 @@ export default function NavBar() {
                             {user && user.membership === 'basic' && (
                               <Menu.Item>
                                 <button
-                                  onClick={() => handleNavigation('/upgrade')}
-                                  className="block px-4 py-2 text-sm text-red-500 w-full text-left"
+                                  onClick={() => handleNavigation('/get-started')}
+                                  className="block px-4 py-2 text-sm font-[500] text-red-500 w-full text-left"
                                 >
                                   Upgrade to Pro
                                 </button>
@@ -157,7 +157,7 @@ export default function NavBar() {
                                   'block px-4 py-2 text-sm w-full text-left',
                                   user.membership === 'premium' ? 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white' : 'bg-gradient-to-r from-[#29625d] to-green-700 text-white'
                                 )}>
-                                  {user.membership === 'premium' ? 'Premium Member' : 'Standard Member'}
+                                  {user.membership === 'premium' || user.membership === 'standard' ? 'Premium Member' : 'Free Member'}
                                 </div>
                               </Menu.Item>
                             )}
@@ -249,7 +249,7 @@ export default function NavBar() {
                             user.membership === 'premium' ? 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white' : 'bg-gradient-to-r from-[#29625d] to-green-700 text-white'
                           )}
                         >
-                          {user.membership === 'premium' ? 'Premium Member' : 'Standard Member'}
+                          {user.membership === 'premium' || user.membership === 'standard' ? 'Premium Member' : 'Free Member'}
                         </Disclosure.Button>
                       )}
 
