@@ -153,7 +153,7 @@ export default function Navbar() {
                 Get started
               </Link>
               <Link
-                to="/learn-more"
+                to="/blog"
                 className="text-sm font-semibold leading-6 text-gray-500"
               >
                 Learn more <span aria-hidden="true">→</span>

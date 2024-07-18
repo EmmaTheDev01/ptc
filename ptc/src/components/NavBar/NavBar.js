@@ -233,7 +233,7 @@ export default function NavBar() {
                       {user && user.membership === 'basic' && (
                         <Disclosure.Button
                           as="button"
-                          onClick={() => handleNavigation('/plans')}
+                          onClick={() => handleNavigation('/get-started')}
                           className="block rounded-md px-3 py-2 text-base font-medium text-red-500 hover:text-red-700"
                         >
                           Upgrade to Pro

@@ -70,9 +70,9 @@ const FreePlan = () => {
       
       {/* Plan Footer */}
       <div className="px-6 pb-6">
-        <Link to='/register'>
+        <Link to='/earn'>
         <button className="w-full bg-[#29625d] text-white py-2 px-4 rounded-lg hover:bg-[#000] transition duration-300">
-          Sign Up
+          Continue
         </button>
         </Link>
       </div>
