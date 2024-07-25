@@ -128,20 +128,13 @@ const Login = () => {
                   required
                 />
               </div>
-              {/* Conditional rendering of processing message */}
-              {processing ? (
-                <div className="flex items-center justify-center mb-4">
-                  <span className="animate-bounce text-[#29625d]">
-                    Processing...
-                  </span>
-                </div>
-              ) : null}
+
               <button
                 type="submit"
                 className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
                 disabled={processing} // Disable button during processing
               >
-                Sign In
+                {processing ? "Processing..." : "Sign In"}
               </button>
             </form>
             <p className="mt-8 text-sm text-gray-600">

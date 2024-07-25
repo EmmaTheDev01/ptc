@@ -12,13 +12,13 @@ const Earn = () => {
   // Check authentication status on component mount
   if (!isLoggedIn) {
     navigate('/login'); // Navigate to login page if not logged in
-    return null; 
+    return null;
   }
 
   return (
-    <div>
+    <div className="relative z-10">
       <NavBar />
-      <AdCard />
+        <AdCard />
       <Footer />
     </div>
   );

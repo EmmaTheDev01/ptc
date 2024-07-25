@@ -12,6 +12,7 @@ const RegistrationForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
   const handleGoogleSuccess = async (response) => {
     try {
@@ -41,6 +42,9 @@ const RegistrationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Show loading indicator
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${server}/auth/register`,
@@ -63,6 +67,9 @@ const RegistrationForm = () => {
         toast.error("An error occurred during signup.");
         console.error(err);
       }
+    } finally {
+      // Hide loading indicator after submission completes
+      setLoading(false);
     }
   };
 
@@ -78,7 +85,8 @@ const RegistrationForm = () => {
           opacity: "0.5", // Adjust opacity as needed
         }}
       ></div>
-<div className="absolute inset-0 bg-[#fed592] opacity-50 z-0"></div>
+      <div className="absolute inset-0 bg-[#fed592] opacity-50 z-0"></div>
+
       {/* Content */}
       <div className="max-w-screen-xl md:w-3/5 sm:w-full bg-white border sm:rounded-lg flex flex-col md:flex-row justify-center relative z-10 shadow-3xl">
         <div className="md:w-1/2 bg-[#29625d] text-center py-12 px-6 md:px-12 rounded-md">
@@ -90,13 +98,13 @@ const RegistrationForm = () => {
               Enter your details to create your account
             </p>
             <GoogleLogin
-                clientId="YOUR_GOOGLE_CLIENT_ID"
-                buttonText="Continue with Google"
-                onSuccess={handleGoogleSuccess}
-                onFailure={handleGoogleFailure}
-                cookiePolicy={"single_host_origin"}
-                className="btn-google w-full py-3 mt-3 rounded-full bg-white text-[#29625d] font-semibold transition duration-300 hover:bg-white shadow-md"
-              />
+              clientId="YOUR_GOOGLE_CLIENT_ID"
+              buttonText="Continue with Google"
+              onSuccess={handleGoogleSuccess}
+              onFailure={handleGoogleFailure}
+              cookiePolicy={"single_host_origin"}
+              className="btn-google w-full py-3 mt-3 rounded-full bg-white text-[#29625d] font-semibold transition duration-300 hover:bg-white shadow-md"
+            />
           </div>
         </div>
         <div className="md:w-1/2 p-6 sm:p-12 bg-white rounded-lg relative z-10">
@@ -148,8 +156,9 @@ const RegistrationForm = () => {
               <button
                 type="submit"
                 className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
+                disabled={loading} // Disable button during processing
               >
-                Sign Up
+                {loading ? "Processing..." : "Sign Up"}
               </button>
             </form>
             <p className="mt-8 text-sm text-gray-600">

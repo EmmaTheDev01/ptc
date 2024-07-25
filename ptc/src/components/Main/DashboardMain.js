@@ -68,7 +68,7 @@ const DashboardMain = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 w-full">
+    <div className="min-h-screen bg-gray-100 w-full mb-8">
       <div className="container mx-auto p-4">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mb-8 mt-5">
           {/* Revenue Card */}
@@ -182,7 +182,7 @@ const DashboardMain = () => {
           </div>
         </div>
         {/* Data Table */}
-        <Table />
+        <Table className="w-full z-0" />
       </div>
     </div>
   );

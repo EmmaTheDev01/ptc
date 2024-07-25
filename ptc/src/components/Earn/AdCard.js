@@ -265,18 +265,18 @@ const AdCard = () => {
   // Render loading state if data is still loading
   if (loading) return <div>Loading...</div>;
 
-  // Render error message if there's an error fetching data
+  // Render error message if there is an error
   if (error) return <div>Error: {error}</div>;
 
   // Render the ad card once data is loaded
   return (
-    <div className="relative pt-2 min-h-screen">
+    <div className="pt-2 min-h-screen z-100"> {/* Adjust z-index here */}
       <ToastContainer />
       <div
         className="bg-cover w-full flex justify-center items-center"
         style={{ backgroundImage: "url('/images/mybackground.jpeg')" }}
       >
-        <div className="w-full bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
+        <div className="w-full z-0 bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
           <div className="w-full mx-auto rounded-2xl bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2 mx-auto">
               {adverts.map((advert) => (

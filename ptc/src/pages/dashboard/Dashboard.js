@@ -42,7 +42,7 @@ const Dashboard = () => {
 
   // Render Dashboard if logged in and isAdmin is true
   return (
-    <div>
+    <div className='z-0'>
       <Navbar/>
       <div className='flex justify-start items-start h-screen bg-gray-50/50'>
         <SideBar/>
