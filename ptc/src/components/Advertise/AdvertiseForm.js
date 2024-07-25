@@ -14,6 +14,7 @@ const AdvertiseForm = () => {
   const [price, setPrice] = useState("");
   const [photo, setPhoto] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [redirect, setRedirect] = useState("");
   const navigate = useNavigate();
 
@@ -40,6 +41,9 @@ const AdvertiseForm = () => {
 
     if (imageUrl) {
       formData.append("imageUrl", imageUrl);
+    }
+    if (videoUrl) {
+      formData.append("videoUrl", videoUrl); // Append video URL to formData
     }
 
     try {
@@ -81,7 +85,7 @@ const AdvertiseForm = () => {
 
   return (
     <div className="flex justify-center flex-wrap w-full p-6 space-x-4">
-      <div className="w-full sm:w-90 max-w-[600px] bg-gray-100 p-6 shadow-lg">
+      <div className="w-full sm:w-90 max-w-[600px] bg-gray-100 p-6">
         <h4 className="text-center text-lg font-semibold mb-3 uppercase text-[18px] text-[#29625d]">Guidelines to create an ad:</h4>
         <div className="bg-white p-4 rounded-lg shadow text-start">
           <div className="mb-4">
@@ -164,6 +168,20 @@ const AdvertiseForm = () => {
               onChange={(e) => setImageUrl(e.target.value)}
               className="form-control w-full appearance-none bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               placeholder="Enter image URL if applicable..."
+            />
+          </div>
+          <div className="form-group mb-4">
+            <label htmlFor="videoUrl" className="text-gray-700 text-sm font-bold mb-2 block">
+              Video URL (Optional)
+            </label>
+            <input
+              type="text"
+              id="videoUrl"
+              name="videoUrl"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="form-control w-full appearance-none bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              placeholder="Enter video URL if applicable..."
             />
           </div>
           <div className="form-group mb-4">

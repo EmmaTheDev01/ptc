@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar/NavBar';
 import FreePlan from '../components/plans/FreePlan';
 import BasicPlan from '../components/plans/BasicPlan';
@@ -7,10 +7,16 @@ import Footer from '../components/Footer';
 import { AuthContext } from '../context/AuthContext';
 
 const Plans = () => {
-  const {isLoggedIn} = useContext(AuthContext);
+  const { isLoggedIn, loading } = useContext(AuthContext);
+  const [redirect, setRedirect] = useState(false);
 
-  if (!isLoggedIn) {
-    window.location.href = '/login';
+  useEffect(() => {
+    if (!isLoggedIn && !loading) {
+      setRedirect(true);
+    }
+  }, [isLoggedIn, loading]);
+
+  if (redirect) {
     return (
       <>
         <NavBar />
@@ -26,7 +32,11 @@ const Plans = () => {
       </>
     );
   }
-  
+
+  if (loading) {
+    return null; // Render loading indicator or empty screen while loading
+  }
+
   return (
     <div>
       <NavBar />

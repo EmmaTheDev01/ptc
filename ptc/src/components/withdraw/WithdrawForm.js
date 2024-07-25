@@ -4,8 +4,9 @@ import { server } from "../../utils/server";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useNavigate } from "react-router-dom";
 const WithdrawForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     userEmail: "",
@@ -92,7 +93,8 @@ const WithdrawForm = () => {
       console.log("Response:", response.data);  // Log the successful response
   
       toast.success("Withdrawal request successful!");
-  
+      navigate('/profile')
+      window.location.reload();
       // Reset form after successful submission
       e.target.reset();
       setFormData({

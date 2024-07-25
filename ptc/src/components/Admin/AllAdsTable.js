@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { server } from '../../utils/server';
 import Cookies from 'js-cookie';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaCheckCircle } from 'react-icons/fa'; // Import FaCheckCircle for approval icon
 import { toast } from 'react-toastify';
 
 const AllAdsTable = () => {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('all'); // State to manage filtering ('all', 'approved', 'not-approved')
 
   // Function to handle the delete request
   const handleDelete = async (adId) => {
@@ -28,6 +29,35 @@ const AllAdsTable = () => {
     } catch (err) {
       console.error('Error deleting ad:', err);
       setError(err.response?.data?.message || err.message || 'Failed to delete ad');
+    }
+  };
+
+  // Function to handle approving an ad
+  const handleApprove = async (adId) => {
+    try {
+      const token = localStorage.getItem('token') || Cookies.get('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      await axios.put(`${server}/adverts/approve/${adId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Update the ad locally after approval
+      setAds((prevAds) =>
+        prevAds.map(ad => {
+          if (ad._id === adId) {
+            return { ...ad, approved: true };
+          }
+          return ad;
+        })
+      );
+
+      toast.success("Ad approved successfully!");
+    } catch (err) {
+      console.error('Error approving ad:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to approve ad');
     }
   };
 
@@ -57,6 +87,22 @@ const AllAdsTable = () => {
     fetchAds();
   }, []);
 
+  // Function to filter ads based on approval status
+  const filterAds = (ads) => {
+    if (filter === 'approved') {
+      return ads.filter(ad => ad.approved);
+    } else if (filter === 'not-approved') {
+      return ads.filter(ad => !ad.approved);
+    } else {
+      return ads;
+    }
+  };
+
+  // Handle filtering change
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
+
   if (loading) return <div className='w-auto ml-auto mr-auto mt-4'>Loading...</div>;
   if (error) return <div className='w-auto ml-auto mr-auto mt-4'>Error: {error}</div>;
 
@@ -73,6 +119,27 @@ const AllAdsTable = () => {
                 <p className="block antialiased tracking-normal font-sans text-sm leading-normal font-normal text-blue-gray-600">
                   View all Advertisements
                 </p>
+              </div>
+              {/* Filter buttons */}
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleFilterChange('all')}
+                  className={`text-sm font-medium ${filter === 'all' ? 'text-blue-600' : 'text-blue-gray-500 hover:text-blue-700'} focus:outline-none`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => handleFilterChange('approved')}
+                  className={`text-sm font-medium ${filter === 'approved' ? 'text-green-600' : 'text-blue-gray-500 hover:text-green-700'} focus:outline-none`}
+                >
+                  Displayed
+                </button>
+                <button
+                  onClick={() => handleFilterChange('not-approved')}
+                  className={`text-sm font-medium ${filter === 'not-approved' ? 'text-red-600' : 'text-blue-gray-500 hover:text-red-700'} focus:outline-none`}
+                >
+                  In Review
+                </button>
               </div>
             </div>
             <div className="p-6">
@@ -108,7 +175,7 @@ const AllAdsTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {ads.map((ad) => (
+                    {filterAds(ads).map((ad) => (
                       <tr key={ad._id}>
                         <td className="py-3 px-6 border-b border-blue-gray-200">
                           <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
@@ -130,7 +197,19 @@ const AllAdsTable = () => {
                             {new Date(ad.createdAt).toLocaleDateString()}
                           </p>
                         </td>
-                        <td className="py-3 px-6 border-b border-blue-gray-200 text-left">
+                        <td className="py-3 px-6 border-b border-blue-gray-200 text-left flex items-center">
+                          {/* Conditionally render either the approve button or approved icon */}
+                          {ad.approved ? (
+                            <FaCheckCircle className="text-green-500 mr-2 cursor-not-allowed" title="Approved" />
+                          ) : (
+                            <button
+                              onClick={() => handleApprove(ad._id)}
+                              className="text-green-500 hover:text-green-700 mr-2 text-center"
+                            >
+                              <FaCheckCircle />
+                            </button>
+                          )}
+                          {/* Delete button */}
                           <button
                             onClick={() => handleDelete(ad._id)}
                             className="text-red-500 hover:text-red-700 text-center"
@@ -149,6 +228,6 @@ const AllAdsTable = () => {
       </section>
     </div>
   );
-}
+};
 
 export default AllAdsTable;

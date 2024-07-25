@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import NavBar from '../components/NavBar/NavBar'
 const AdvertisePage = () => {
   return (
-    <div>
+    <div className='bg-gray-100'>
       <NavBar />
       <AdvertiseForm />
       <Footer />

@@ -16,7 +16,7 @@ const SideBar = () => {
         className="lg:hidden fixed z-50 top-3 left-4 p-2 rounded-md bg-white shadow-lg focus:outline-none"
       >
         <svg
-          className="w-6 h-6"
+          className={`w-6 h-6 transform ${isMobileMenuOpen ? 'rotate-90' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

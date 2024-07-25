@@ -181,6 +181,7 @@ const Profile = () => {
                     ? userData?.withdrawnBalance
                     : userData?.withdrawnBalance + ".00"}
                 </p>
+                <p className="text-sm mt-4 text-gray-400">Through withdraw, we tax you with the 26% of the amount you are withdrawing</p>
               </div>
             </div>
           </div>

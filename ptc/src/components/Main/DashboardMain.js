@@ -44,15 +44,15 @@ const DashboardMain = () => {
         setAdCount(advertsResponse.data.data.length || 0);
 
         // Fetch daily user count
-        const dailyUserResponse = await axios.get(`${server}/user/daily-stats`, {
+        const dailyUserResponse = await axios.get(`${server}/user/daily-user-count`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setDailyUserCount(dailyUserResponse.data.dailyUserCount);
+        setDailyUserCount(dailyUserResponse.data.data);
 
         // Fetch daily payment request count
-        const dailyPaymentRequestsResponse = await axios.get(`${server}/payment/daily-stats`, {
+        const dailyPaymentRequestsResponse = await axios.get(`${server}/payment/daily-payment-count`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

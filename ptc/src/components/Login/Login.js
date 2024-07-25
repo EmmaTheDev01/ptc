@@ -1,36 +1,61 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import Axios
-import server from "../../utils/server";
+import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { GoogleLogin } from "react-google-login";
+import { server } from "../../utils/server";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [processing, setProcessing] = useState(false); // State for processing indicator
+
+  const handleGoogleSuccess = async (response) => {
+    try {
+      const googleToken = response.tokenId;
+
+      const googleResponse = await axios.post(
+        `${server}/auth/google`,
+        { token: googleToken },
+        { withCredentials: true }
+      );
+
+      login();
+      toast.success("Login Successful!");
+      localStorage.setItem("token", googleResponse.data.token);
+      localStorage.setItem("role", googleResponse.data.role);
+      navigate("/earn");
+    } catch (err) {
+      console.error("Google login error:", err);
+      toast.error("Google login failed. Please try again.");
+    }
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error("Google login error:", error);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Show processing indicator
+    setProcessing(true);
+
     try {
       const response = await axios.post(
         `${server}/auth/login`,
-        {
-          email,
-          password,
-        },
+        { email, password },
         { withCredentials: true }
       );
 
-      // Assuming login was successful, update the context
-      login(); // Update the AuthContext state to indicate the user is logged in
-      toast.success("Login Success!");
-      localStorage.setItem("token", response.data.token)
+      login();
+      toast.success("Login Successful!");
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
-      navigate("/earn"); // Redirect to dashboard upon successful login
-      console.log(response);
+      navigate("/earn");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
@@ -38,74 +63,93 @@ const Login = () => {
         toast.error("An error occurred during login.");
         console.error(err);
       }
+    } finally {
+      // Hide processing indicator after submission completes
+      setProcessing(false);
     }
   };
 
   return (
-    <div className="h-screen flex items-center justify-center px-5 lg:px-0">
-      <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-        <div className="flex-1 bg-[#29625d] text-center hidden md:flex">
-          <div
-            className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(https://www.tailwindtap.com/assets/common/marketing.svg)`,
-            }}
-          ></div>
-        </div>
-        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-          <div className="flex flex-col items-center">
-            <div className="text-center">
-              <h1 className="text-2xl xl:text-4xl font-extrabold text-[#29625d]">
-                User Login
-              </h1>
-              <p className="text-[12px] text-gray-500">
-                Hey enter your details to log into your account
-              </p>
+    <div className="relative flex items-center justify-center min-h-screen px-5 lg:px-0">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url('https://img.freepik.com/free-photo/3d-background-with-white-cubes_23-2150472987.jpg?w=740&t=st=1721891400~exp=1721892000~hmac=db9b4f51e16fe1fa160a80869b1a91d4a227b998f1926a75a875c9d60fefb509')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: "0.5", // Adjust opacity as needed
+        }}
+      ></div>
+      <div className="absolute inset-0 bg-[#fed592] opacity-50 z-0"></div>
+
+      <div className="max-w-screen-xl md:w-3/5 sm:w-full bg-white border sm:rounded-lg flex flex-col md:flex-row justify-center relative z-10 shadow-lg">
+        <div className="md:w-1/2 bg-[#29625d] text-center py-12 px-6 md:px-12 rounded-md">
+          <div className="my-auto">
+            <h1 className="text-3xl font-extrabold text-white">
+              Welcome Back!
+            </h1>
+            <p className="mt-4 text-sm text-gray-200">
+              Enter your details to log into your account
+            </p>
+            <div className="mt-8">
+              <GoogleLogin
+                clientId="YOUR_GOOGLE_CLIENT_ID"
+                buttonText="Continue with Google"
+                onSuccess={handleGoogleSuccess}
+                onFailure={handleGoogleFailure}
+                cookiePolicy={"single_host_origin"}
+                className="btn-google w-full py-3 rounded-full bg-white text-[#29625d] font-semibold transition duration-300 hover:bg-white shadow-md"
+              />
             </div>
-            <form onSubmit={handleSubmit} className="w-full flex-1 mt-8">
-              <div className="mx-auto max-w-xs flex flex-col gap-4">
+          </div>
+        </div>
+        <div className="md:w-1/2 p-6 sm:p-12 bg-white rounded-lg relative z-10">
+          <div className="flex flex-col items-center">
+            <h2 className="text-3xl mb-4 font-bold text-[#29625d]">Login</h2>
+            <form onSubmit={handleSubmit} className="w-full max-w-sm">
+              <div className="mb-4">
                 <input
-                  id="email"
-                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  className="input-field text-sm p-2 w-full border rounded-md focus:border-[#29625d] focus:outline-none"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
+              </div>
+              <div className="mb-6">
                 <input
-                  id="password"
-                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  className="input-field text-sm p-2 w-full border rounded-md focus:border-[#29625d] focus:outline-none"
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
-
-                <button
-                  type="submit"
-                  className="mt-5 tracking-wide font-semibold bg-[#29625d] text-gray-100 w-full py-4 rounded-lg hover:bg-[#fed592] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                >
-                  <svg
-                    className="w-6 h-6 -ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 17v-7M9 12h6" />
-                  </svg>
-                  <span className="ml-3">Sign In</span>
-                </button>
-                <p className="mt-6 text-xs text-gray-600 text-center">
-                  Don't have an account?{" "}
-                  <Link to="/register" className="text-[#29625d] font-semibold">
-                    Sign Up
-                  </Link>
-                </p>
               </div>
+              {/* Conditional rendering of processing message */}
+              {processing ? (
+                <div className="flex items-center justify-center mb-4">
+                  <span className="animate-bounce text-[#29625d]">
+                    Processing...
+                  </span>
+                </div>
+              ) : null}
+              <button
+                type="submit"
+                className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
+                disabled={processing} // Disable button during processing
+              >
+                Sign In
+              </button>
             </form>
+            <p className="mt-8 text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-[#29625d] font-semibold">
+                Sign Up
+              </Link>
+            </p>
           </div>
         </div>
       </div>
