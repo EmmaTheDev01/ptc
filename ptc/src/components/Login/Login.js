@@ -83,7 +83,7 @@ const Login = () => {
       ></div>
       <div className="absolute inset-0 bg-[#fed592] opacity-50 z-0"></div>
 
-      <div className="max-w-screen-xl md:w-3/5 sm:w-full bg-white border sm:rounded-lg flex flex-col md:flex-row justify-center relative z-10 shadow-lg">
+      <div className="max-w-screen-xl md:w-3/5 sm:w-full bg-white border sm:rounded-lg flex flex-col md:flex-row justify-center relative z-10 shadow-3xl">
         <div className="md:w-1/2 bg-[#29625d] text-center py-12 px-6 md:px-12 rounded-md">
           <div className="my-auto">
             <h1 className="text-3xl font-extrabold text-white">

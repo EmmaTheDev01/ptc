@@ -34,7 +34,7 @@ const SideBar = () => {
       >
         <div className="flex flex-col justify-between h-full">
           <nav className="space-y-6">
-            <div className="space-y-3 mt-5">
+            <div className="space-y-3 mt-8">
               <Link
                 to="/dashboard"
                 className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg hover:text-gray-700"

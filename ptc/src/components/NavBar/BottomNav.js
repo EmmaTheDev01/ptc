@@ -17,7 +17,7 @@ const BottomNav = () => {
           </Link>
           <Link to="/advertise" className="flex flex-col items-center justify-center text-gray-600 hover:text-[#29625d] py-2 px-4">
             <FaAd className="h-6 w-6" />
-            <span className="text-xs mt-1">Documents</span>
+            <span className="text-xs mt-1">Advertise</span>
           </Link>
           <Link to="/profile" className="flex flex-col items-center justify-center text-gray-600 hover:text-[#29625d] py-2 px-4">
             <FaUser className="h-6 w-6" />
