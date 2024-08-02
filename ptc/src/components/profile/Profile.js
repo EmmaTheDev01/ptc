@@ -8,6 +8,7 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +40,19 @@ const Profile = () => {
     fetchData();
   }, []);
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setNotification("Referral code copied!");
+        setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+      },
+      (err) => {
+        setNotification("Failed to copy referral code.");
+        setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+      }
+    );
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data: {error.message}</p>;
 
@@ -47,7 +61,7 @@ const Profile = () => {
     userData?.membership === "standard" || userData?.membership === "premium";
 
   return (
-    <div className="bg-gray-100 h-full mt-6 w-[90%] ml-auto mr-auto">
+    <div className="bg-gray-100 h-full mt-6 w-[90%] ml-auto mr-auto mb-20">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
         <div className="md:flex no-wrap md:-mx-2">
           <div className="w-full md:w-3/12 md:mx-2">
@@ -65,6 +79,12 @@ const Profile = () => {
               <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
                 {userData?.username || "Loading..."}
               </h1>
+              <p 
+                className="text-sm font-bold text-black hover:text-gray-600 leading-6 cursor-pointer"
+                onClick={() => copyToClipboard(userData?.referralCode || '')}
+              >
+                {userData?.referralCode || "No referral code"}
+              </p>
               <h3 className="text-gray-600 font-lg text-semibold leading-6 mb-3 font-600">
                 {userData?.email || "Loading..."}
               </h3>
@@ -187,6 +207,13 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Notification */}
+      {notification && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-md shadow-lg">
+          {notification}
+        </div>
+      )}
     </div>
   );
 };

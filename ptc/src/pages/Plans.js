@@ -41,7 +41,7 @@ const Plans = () => {
     <div>
       <NavBar />
       <div className="bg-white py-12 px-6 sm:py-16 sm:px-12">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center mb-20 sm:mb-0">
           <h1 className="text-4xl font-bold leading-tight text-gray-800 sm:text-5xl">
             Choose the Perfect Plan for You
           </h1>

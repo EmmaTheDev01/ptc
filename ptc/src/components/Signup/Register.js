@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { GoogleLogin } from "react-google-login";
 import { server } from "../../utils/server";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ const RegistrationForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [referredBy, setReferredBy] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleGoogleSuccess = async (response) => {
     try {
@@ -53,6 +55,7 @@ const RegistrationForm = () => {
           email,
           password,
           phone,
+          referredBy,
         },
         { withCredentials: true }
       );
@@ -143,6 +146,15 @@ const RegistrationForm = () => {
                   required
                 />
               </div>
+              <div className="mb-4">
+                <input
+                  className="input-field p-2 w-full border text-sm rounded-md focus:border-[#29625d] focus:outline-none"
+                  type="text"
+                  placeholder="Referral Code (optional)"
+                  value={referredBy}
+                  onChange={(e) => setReferredBy(e.target.value)}
+                />
+              </div>
               <div className="mb-6">
                 <input
                   className="input-field p-2 w-full border text-sm rounded-md focus:border-[#29625d] focus:outline-none"
@@ -170,6 +182,9 @@ const RegistrationForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };

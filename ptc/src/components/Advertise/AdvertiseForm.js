@@ -84,7 +84,7 @@ const AdvertiseForm = () => {
   }
 
   return (
-    <div className="flex justify-center flex-wrap w-full p-6 space-x-4">
+    <div className="flex mb-20 justify-center flex-wrap w-full p-6 space-x-4">
       <div className="w-full sm:w-90 max-w-[600px] bg-gray-100 p-6">
         <h4 className="text-center text-lg font-semibold mb-3 uppercase text-[18px] text-[#29625d]">Guidelines to create an ad:</h4>
         <div className="bg-white p-4 rounded-lg shadow text-start">

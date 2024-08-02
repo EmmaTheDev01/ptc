@@ -270,7 +270,7 @@ const AdCard = () => {
 
   // Render the ad card once data is loaded
   return (
-    <div className="pt-2 min-h-screen z-100"> {/* Adjust z-index here */}
+    <div className="pt-2 mb-20 md:mb-0 min-h-screen z-100"> {/* Apply mb-20 only on smaller screens */}
       <ToastContainer />
       <div
         className="bg-cover w-full flex justify-center items-center"

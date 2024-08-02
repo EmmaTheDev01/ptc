@@ -46,21 +46,21 @@ const Blog = () => {
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-700">From Our Blog</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map(post => (
-            <div key={post.id} className="bg-white rounded-lg shadow-md p-6 flex">
-              <div className="mr-4">
+            <div key={post.id} className="bg-white rounded-lg shadow-md p-6 flex flex-col lg:flex-row items-start">
+              <div className="flex-shrink-0 mb-4 lg:mb-0 lg:mr-6">
                 <img
-                  className="w-[150px] height-[150px] border-2 border-[#29625d] rounded-full object-cover"
+                  className="w-16 h-16 border-2 border-[#29625d] rounded-full object-cover"
                   src={getUserIconUrl(post.author)}
                   alt={post.author}
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <h2 className="text-xl font-bold mb-2 text-gray-800">{post.title}</h2>
-                <p className="text-[#29625d] text-start font-[500]">{post.author}</p>
-                <p className="mt-4 text-gray-600 text-start">{post.content}</p>
-                <p className="text-start mt-5 text-[12px] text-gray-700 font-[500]">{post.date}</p>
+                <p className="text-[#29625d] text-start font-medium mb-2">{post.author}</p>
+                <p className="mt-2 text-gray-600 text-start">{post.content}</p>
+                <p className="text-start mt-4 text-sm text-gray-700 font-medium">{post.date}</p>
               </div>
             </div>
           ))}

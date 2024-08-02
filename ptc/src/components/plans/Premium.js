@@ -59,7 +59,7 @@ const Premium = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col h-full m-3">
+    <div className="max-w-sm mb-20 mx-auto bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col h-full m-3">
       {/* Plan Header */}
       <div className="px-6 py-4 bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white">
         <h2 className="text-2xl font-semibold mb-2">Premium Plan</h2>

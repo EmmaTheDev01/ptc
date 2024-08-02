@@ -18,6 +18,10 @@ import ApprovedRequests from './pages/dashboard/ApprovedRequests';
 import ProfilePage from './pages/ProfilePage';
 import WithdrawPage from './pages/WithdrawPage';
 import AllMessages from './pages/dashboard/AllMessges';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 function App() {
   return (
     <Router>
@@ -40,7 +44,10 @@ function App() {
           <Route path='/approved' element={<ApprovedRequests/>} />
           <Route path='/withdraw' element={<WithdrawPage/>} /> 
           <Route path='/messages' element={<AllMessages/>} />
+          <Route path='/forgot-password' element={<ForgotPasswordPage/>} />
+          <Route path='/reset-password' element={<ResetPasswordPage/>} />
         </Routes>
+        <ToastContainer />
       </div>
     </Router>
   );

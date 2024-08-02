@@ -38,7 +38,7 @@ const Table = () => {
   }, []);
 
   return (
-    <div className="z-10">
+    <div className="z-10 mb-20">
       <section className="p-6 m-2">
         <div className="mb-4">
           <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2 w-full">

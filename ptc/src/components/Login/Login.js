@@ -2,7 +2,8 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "react-google-login";
 import { server } from "../../utils/server";
 
@@ -27,7 +28,9 @@ const Login = () => {
       toast.success("Login Successful!");
       localStorage.setItem("token", googleResponse.data.token);
       localStorage.setItem("role", googleResponse.data.role);
-      navigate("/earn");
+
+      // Add a delay before navigation
+      setTimeout(() => navigate("/earn"), 500); // 500ms delay
     } catch (err) {
       console.error("Google login error:", err);
       toast.error("Google login failed. Please try again.");
@@ -55,7 +58,9 @@ const Login = () => {
       toast.success("Login Successful!");
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
-      navigate("/earn");
+
+      // Add a delay before navigation
+      setTimeout(() => navigate("/earn"), 500); // 500ms delay
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
@@ -72,6 +77,7 @@ const Login = () => {
   return (
     <div className="relative flex items-center justify-center min-h-screen px-5 lg:px-0">
       {/* Background Image */}
+      <ToastContainer />
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -141,6 +147,11 @@ const Login = () => {
               Don't have an account?{" "}
               <Link to="/register" className="text-[#29625d] font-semibold">
                 Sign Up
+              </Link>
+            </p>
+            <p className="mt-4 text-sm text-gray-600">
+              <Link to="/forgot-password" className="text-[#29625d] font-semibold">
+                Forgot Password?
               </Link>
             </p>
           </div>
