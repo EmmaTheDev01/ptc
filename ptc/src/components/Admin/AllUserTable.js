@@ -46,6 +46,35 @@ const AllUserTable = () => {
     ); // Toggle filter on/off
   };
 
+  const handleUpdateBalance = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      await axios.patch(`${server}/user/${userId}`, 
+      { 
+        currentBalance: { $inc: { currentBalance: 500 }, $set: { bonus: 0 } } 
+      }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Refresh users list after update
+      const response = await axios.get(`${server}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsers(response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    } catch (err) {
+      setError(err);
+    }
+  };
+
   if (loading) return <p className="w-auto ml-auto mr-auto mt-4">Loading...</p>;
   if (error)
     return (
@@ -59,8 +88,16 @@ const AllUserTable = () => {
     ? users.filter((user) => user.membership === selectedMembership)
     : users;
 
+  // Count of users referred by each user
+  const referralCounts = filteredUsers.reduce((acc, user) => {
+    if (user.refferedBy) {
+      acc[user.refferedBy] = (acc[user.refferedBy] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-auto">
       <section className="p-6 m-2 w-full">
         <div className="mb-4 w-full">
           <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2 w-full">
@@ -116,99 +153,104 @@ const AllUserTable = () => {
                 </button>
               </div>
             </div>
-            <div className="p-6 overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+            <div className="p-6">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         User
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Email
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Membership
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Earning
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Reference
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ref-by
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Requests
-                      </p>
-                    </th>
-                    <th className="border-b border-blue-gray-50 py-3 px-6 text-left">
-                      <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
-                        Date
-                      </p>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user) => (
-                    <tr key={user._id}>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
-                          {user.username}
-                        </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          {user.email}
-                        </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p
-                          className={`block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start ${getMembershipColor(
-                            user.membership
-                          )}`}
-                        >
-                          {getUserMembershipLabel(user.membership)}
-                        </p>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600 text-start">
-                          RWF {user.currentBalance?.toFixed(2) || '0.00'}
-                        </p>
-                        <div className="flex flex-start bg-blue-gray-50 overflow-hidden w-full rounded-sm font-sans text-xs font-medium h-1">
-                          <div
-                            className="flex justify-center items-center h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white"
-                            style={{
-                              width: `${(user.currentBalance || 0) * 10}%`,
-                            }} // Example of a progress bar
-                          ></div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600 text-start">
-                          RWF {user.requests?.toFixed(2) || '0.00'}
-                        </p>
-                        <div className="flex flex-start bg-blue-gray-50 overflow-hidden w-full rounded-sm font-sans text-xs font-medium h-1">
-                          <div
-                            className="flex justify-center items-center h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white"
-                            style={{
-                              width: `${(user.requests || 0) * 10}%`,
-                            }} // Example of a progress bar
-                          ></div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          {user.createdAt.split('T')[0]}
-                        </p>
-                      </td>
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Registered
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredUsers.map((user) => (
+                      <tr key={user._id}>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {user.username}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {user.email}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          <p className={`font-medium ${getMembershipColor(user.membership)}`}>
+                            {getUserMembershipLabel(user.membership)}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          <p className="mb-1">
+                            RWF {user.currentBalance?.toFixed(2) || '0.00'}
+                          </p>
+                          <div className="flex bg-gray-200 rounded-full overflow-hidden h-1">
+                            <div
+                              className="bg-blue-600 text-white"
+                              style={{
+                                width: `${(user.currentBalance || 0) * 10}%`,
+                              }}
+                            ></div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {user.referralCode}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {user.refferedBy}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          <p className="mb-1">
+                            RWF {user.requests?.toFixed(2) || '0.00'}
+                          </p>
+                          <div className="flex bg-gray-200 rounded-full overflow-hidden h-1">
+                            <div
+                              className="bg-blue-600 text-white"
+                              style={{
+                                width: `${(user.requests || 0) * 10}%`,
+                              }}
+                            ></div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {user.createdAt.split('T')[0]}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {referralCounts[user._id] > 2 && (
+                            <button
+                              className="bg-[#29625d] text-white hover:bg-black px-4 py-2 rounded-lg"
+                              onClick={() => handleUpdateBalance(user._id)}
+                            >
+                              Add Bonus
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -220,11 +262,11 @@ const AllUserTable = () => {
 const getMembershipColor = (membership) => {
   switch (membership) {
     case 'premium':
-      return 'p-2 bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white rounded-lg';
+      return 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white rounded-lg';
     case 'standard':
       return 'bg-gradient-to-r from-[#29625d] to-green-700 text-white rounded-lg';
     case 'basic':
-      return 'p-2 bg-gradient-to-r from-gray-300 to-gray-100 text-gray-600 rounded-lg';
+      return 'bg-gradient-to-r from-gray-300 to-gray-100 text-gray-600 rounded-lg';
     default:
       console.warn('Unknown membership type:', membership);
       return 'bg-gray-300 text-gray-700';
