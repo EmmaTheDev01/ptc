@@ -25,14 +25,16 @@ const DashboardMain = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUserCount(usersResponse.data.data.length || 0);
+        const usersData = usersResponse.data.data || [];
+        setUserCount(usersData.length);
+        console.log(usersData.createdAt);
 
         // Calculate revenue from currentBalance
-        const totalRevenue = usersResponse.data.data.reduce((acc, user) => acc + (user.currentBalance || 0), 0);
+        const totalRevenue = usersData.reduce((acc, user) => acc + (user.currentBalance || 0), 0);
         setRevenue(`RWF ${totalRevenue.toFixed(2)}`);
 
         // Fetch total withdrawals
-        const totalWithdraws = usersResponse.data.data.reduce((acc, user) => acc + (user.withdrawnBalance || 0), 0);
+        const totalWithdraws = usersData.reduce((acc, user) => acc + (user.withdrawnBalance || 0), 0);
         setMadeWithdrawals(totalWithdraws);
 
         // Fetch all adverts
@@ -43,21 +45,32 @@ const DashboardMain = () => {
         });
         setAdCount(advertsResponse.data.data.length || 0);
 
-        // Fetch daily user count
-        const dailyUserResponse = await axios.get(`${server}/user/daily-user-count`, {
+        // Fetch all payment requests
+        const paymentRequestsResponse = await axios.get(`${server}/payment`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setDailyUserCount(dailyUserResponse.data.data);
+        const paymentRequestsData = paymentRequestsResponse.data.data || [];
 
-        // Fetch daily payment request count
-        const dailyPaymentRequestsResponse = await axios.get(`${server}/payment/daily-payment-count`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setDailyPaymentRequests(dailyPaymentRequestsResponse.data.data);
+        // Get current date range
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+        // Count daily users and payment requests
+        const dailyUsersCount = usersData.filter(user => {
+          const createdAt = new Date(user.createdAt);
+          return createdAt >= startOfDay && createdAt <= endOfDay;
+        }).length;
+
+        const dailyRequestsCount = paymentRequestsData.filter(request => {
+          const createdAt = new Date(request.createdAt);
+          return createdAt >= startOfDay && createdAt <= endOfDay;
+        }).length;
+
+        setDailyUserCount(dailyUsersCount);
+        setDailyPaymentRequests(dailyRequestsCount);
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error.message);
