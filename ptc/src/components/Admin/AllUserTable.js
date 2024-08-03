@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { server } from '../../utils/server';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AllUserTable = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedMembership, setSelectedMembership] = useState(null); // State for selected membership filter
+  const [selectedMembership, setSelectedMembership] = useState(null);
+  const [bonusGivenUsers, setBonusGivenUsers] = useState(new Set());
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -24,9 +27,8 @@ const AllUserTable = () => {
           },
         });
 
-        console.log('API Response:', response.data); // Log the entire response
+        console.log('API Response:', response.data);
 
-        // Sort users by createdAt date from newest to oldest
         const sortedUsers = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         setUsers(sortedUsers);
@@ -43,25 +45,41 @@ const AllUserTable = () => {
   const handleMembershipFilter = (membership) => {
     setSelectedMembership((prevMembership) =>
       prevMembership === membership ? null : membership
-    ); // Toggle filter on/off
+    );
   };
 
-  const handleUpdateBalance = async (userId) => {
+  const countReferralOccurrences = (referralCode) => {
+    return users.filter(user => user.referredBy === referralCode).length;
+  };
+
+  const updateReferrerBalance = async (referrerId, bonusAmount) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('No token found');
       }
 
-      await axios.patch(`${server}/user/${userId}`, 
+      // Fetch the referrer’s current balance
+      const referrerResponse = await axios.get(`${server}/user/${referrerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const referrer = referrerResponse.data;
+
+      // Update the referrer’s balance
+      await axios.patch(`${server}/user/${referrerId}`, 
       { 
-        currentBalance: { $inc: { currentBalance: 500 }, $set: { bonus: 0 } } 
+        currentBalance: referrer.currentBalance + bonusAmount
       }, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Notify admin
+      toast.success('Bonus added to referrer!');
 
       // Refresh users list after update
       const response = await axios.get(`${server}/user`, {
@@ -75,6 +93,64 @@ const AllUserTable = () => {
     }
   };
 
+  const handleUpdateBalance = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      // Find the referred user
+      const referredUser = users.find(user => user._id === userId);
+      if (!referredUser) {
+        throw new Error('User not found');
+      }
+
+      // Check the number of times the referral code is used
+      const referralCount = countReferralOccurrences(referredUser.referralCode);
+
+      if (referralCount >= 3) {
+        // Update the referred user's balance and reset their bonus
+        await axios.put(`${server}/user/${userId}`, 
+        { 
+          currentBalance: referredUser.currentBalance + 500, 
+          bonus: 0 
+        }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Notify admin
+        toast.success('Bonus added to referred user!');
+
+        // Fetch users again to get the updated data
+        const response = await axios.get(`${server}/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const updatedUsers = response.data.data;
+
+        // Find the referrer of this user
+        if (referredUser.referredBy) {
+          const referrer = updatedUsers.find(user => user.referralCode === referredUser.referredBy);
+          if (referrer) {
+            await updateReferrerBalance(referrer._id, 500);
+          }
+        }
+
+        setUsers(updatedUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        setBonusGivenUsers(prev => new Set(prev.add(userId))); // Mark the bonus as given
+      } else {
+        toast.error('Referral code must be used at least 3 times to be eligible for a bonus.');
+      }
+    } catch (err) {
+      setError(err);
+    }
+  };
+
   if (loading) return <p className="w-auto ml-auto mr-auto mt-4">Loading...</p>;
   if (error)
     return (
@@ -83,15 +159,15 @@ const AllUserTable = () => {
       </p>
     );
 
-  // Filter users based on selected membership
   const filteredUsers = selectedMembership
     ? users.filter((user) => user.membership === selectedMembership)
     : users;
 
-  // Count of users referred by each user
+  // Calculate referral counts for display purposes
   const referralCounts = filteredUsers.reduce((acc, user) => {
-    if (user.refferedBy) {
-      acc[user.refferedBy] = (acc[user.refferedBy] || 0) + 1;
+    if (user.referralCode) {
+      const count = countReferralOccurrences(user.referralCode);
+      acc[user.referralCode] = count;
     }
     return acc;
   }, {});
@@ -174,7 +250,7 @@ const AllUserTable = () => {
                         Reference
                       </th>
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ref-by
+                        ReferredBy
                       </th>
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Requests
@@ -218,7 +294,7 @@ const AllUserTable = () => {
                           {user.referralCode}
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
-                          {user.refferedBy}
+                          {user.referredBy}
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
                           <p className="mb-1">
@@ -237,13 +313,17 @@ const AllUserTable = () => {
                           {user.createdAt.split('T')[0]}
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
-                          {referralCounts[user._id] > 2 && (
+                          {bonusGivenUsers.has(user._id) ? (
+                            <span className="text-green-600 font-medium">Bonus Given</span>
+                          ) : countReferralOccurrences(user.referralCode) >= 3 ? (
                             <button
                               className="bg-[#29625d] text-white hover:bg-black px-4 py-2 rounded-lg"
                               onClick={() => handleUpdateBalance(user._id)}
                             >
                               Add Bonus
                             </button>
+                          ) : (
+                            <span className="text-gray-500">Not Eligible</span>
                           )}
                         </td>
                       </tr>
@@ -255,6 +335,7 @@ const AllUserTable = () => {
           </div>
         </div>
       </section>
+      <ToastContainer />
     </div>
   );
 };
@@ -262,11 +343,11 @@ const AllUserTable = () => {
 const getMembershipColor = (membership) => {
   switch (membership) {
     case 'premium':
-      return 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white rounded-lg';
+      return 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white rounded-lg p-2';
     case 'standard':
-      return 'bg-gradient-to-r from-[#29625d] to-green-700 text-white rounded-lg';
+      return 'bg-gradient-to-r from-[#29625d] to-green-700 text-white rounded-lg p-2 ';
     case 'basic':
-      return 'bg-gradient-to-r from-gray-300 to-gray-100 text-gray-600 rounded-lg';
+      return 'bg-gradient-to-r from-gray-300 to-gray-100 text-gray-600 rounded-lg p-2';
     default:
       console.warn('Unknown membership type:', membership);
       return 'bg-gray-300 text-gray-700';
