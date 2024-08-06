@@ -45,7 +45,7 @@ function App() {
           <Route path='/withdraw' element={<WithdrawPage/>} /> 
           <Route path='/messages' element={<AllMessages/>} />
           <Route path='/forgot-password' element={<ForgotPasswordPage/>} />
-          <Route path='/reset-password' element={<ResetPasswordPage/>} />
+          <Route path='/reset-password/:token' element={<ResetPasswordPage/>} />
         </Routes>
         <ToastContainer />
       </div>

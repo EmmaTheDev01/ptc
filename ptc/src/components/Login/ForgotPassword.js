@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { server } from "../../utils/server";
 import { Link } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ForgotPassword = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [processing, setProcessing] = useState(false); // State for processing indicator
 
@@ -21,8 +21,7 @@ const ForgotPassword = () => {
         { email }
       );
 
-      toast.success(response.data.message);
-      navigate("/login"); // Redirect to login page after successful request
+      toast.success("Please check your email for the password reset link.");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
@@ -93,6 +92,7 @@ const ForgotPassword = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

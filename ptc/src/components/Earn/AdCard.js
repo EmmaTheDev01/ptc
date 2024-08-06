@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { server } from "../../utils/server";
+import { FaCoins } from "react-icons/fa";
 
 const AdCard = () => {
   const [watchedAds, setWatchedAds] = useState([]);
@@ -308,15 +309,29 @@ const AdCard = () => {
                         )}
                       </div>
                     ) : (
-                      <img
-                        className="h-40 w-full rounded-2xl object-cover transition-transform duration-300 transform group-hover:scale-105"
-                        src={
-                          advert.photo?.url ||
-                          advert.imageUrl ||
-                          "https://www.vhv.rs/dpng/d/159-1593324_ppc-online-advertising-full-online-ads-clipart-hd.png"
-                        }
-                        alt={advert.title}
-                      />
+                      <div className="relative h-40 w-full rounded-2xl overflow-hidden">
+                        {advert.photo && advert.photo.length > 0 ? (
+                          <div className="flex space-x-2 overflow-x-auto">
+                            {advert.photo.map((photo, index) => (
+                              <img
+                                key={index}
+                                className="h-40 w-full rounded-2xl object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                src={photo.url || "https://www.vhv.rs/dpng/d/159-1593324_ppc-online-advertising-full-online-ads-clipart-hd.png"}
+                                alt={`${advert.title} ad ${index}`}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <img
+                            className="h-40 w-full rounded-2xl object-cover transition-transform duration-300 transform group-hover:scale-105"
+                            src={
+                              advert.imageUrl ||
+                              "https://www.vhv.rs/dpng/d/159-1593324_ppc-online-advertising-full-online-ads-clipart-hd.png"
+                            }
+                            alt={advert.title}
+                          />
+                        )}
+                      </div>
                     )}
 
                     <a
@@ -345,21 +360,8 @@ const AdCard = () => {
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                      <svg
-                        className="w-5 h-5 text-gray-600 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M11 3h2v6h-2zM11 17h2v2h-2zM6.293 5.293a1 1 0 011.414 0L12 8.586l4.293-4.293a1 1 0 111.414 1.414L13.414 10l4.293 4.293a1 1 0 11-1.414 1.414L12 12.414l-4.293 4.293a1 1 0 01-1.414-1.414z"
-                        />
-                      </svg>
-                      <span className="text-[18px] font-semibold text-slate-400">
+                     <span className="mr-2 text-gold"><FaCoins/></span>
+                      <span className="text-[16px] font-semibold text-slate-400">
                         {advert.price} RWF
                       </span>
                     </div>

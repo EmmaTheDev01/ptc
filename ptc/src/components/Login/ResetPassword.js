@@ -38,10 +38,10 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen px-5 lg:px-0">
+    <div className="relative flex items-center justify-center min-h-screen w-full px-5 lg:px-0">
       {/* Background Image */}
       <div
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 bg-cover bg-center"
         style={{
           backgroundImage: `url('https://img.freepik.com/free-photo/3d-background-with-white-cubes_23-2150472987.jpg?w=740&t=st=1721891400~exp=1721892000~hmac=db9b4f51e16fe1fa160a80869b1a91d4a227b998f1926a75a875c9d60fefb509')`,
           backgroundSize: "cover",
@@ -51,40 +51,43 @@ const ResetPassword = () => {
       ></div>
       <div className="absolute inset-0 bg-[#fed592] opacity-50 z-0"></div>
 
-      <div className="max-w-screen-xl md:w-3/5 sm:w-full bg-white border sm:rounded-lg flex flex-col md:flex-row justify-center relative z-10 shadow-3xl">
-        <div className="md:w-1/2 bg-[#29625d] text-center py-12 px-6 md:px-12 rounded-md">
-          <div className="my-auto">
-            <h1 className="text-3xl font-extrabold text-white">
-              Reset Password
-            </h1>
-            <p className="mt-4 text-sm text-gray-200">
-              Enter your new password
-            </p>
+      <div className="relative z-10 w-full max-w-screen-sm bg-white border rounded-lg shadow-3xl">
+        <div className="flex flex-col md:flex-row">
+          <div className="md:w-1/2 bg-[#29625d] text-center py-12 px-6 md:px-12 rounded-t-lg md:rounded-l-lg md:rounded-tr-none">
+            <div className="my-auto">
+              <h1 className="text-3xl font-extrabold text-white">
+                Reset Password
+              </h1>
+              <p className="mt-4 text-sm text-gray-200">
+                Enter the new password you want to use.
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="md:w-1/2 p-6 sm:p-12 bg-white rounded-lg relative z-10">
-          <div className="flex flex-col items-center">
-            <h2 className="text-3xl mb-4 font-bold text-[#29625d]">New Password</h2>
-            <form onSubmit={handleSubmit} className="w-full max-w-sm">
-              <div className="mb-4">
-                <input
-                  className="input-field text-sm p-2 w-full border rounded-md focus:border-[#29625d] focus:outline-none"
-                  type="password"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-              </div>
+          <div className="md:w-1/2 p-6 bg-white rounded-b-lg md:rounded-r-lg md:rounded-bl-none">
+            <div className="flex flex-col items-center">
+              <h2 className="text-3xl mb-4 font-bold text-[#29625d]">New Password</h2>
+              <form onSubmit={handleSubmit} className="w-full">
+                <div className="mb-4">
+                  <label className="block mb-1 text-sm font-medium">New Password:</label>
+                  <input
+                    className="input-field text-sm p-2 w-full border rounded-md focus:border-[#29625d] focus:outline-none"
+                    type="password"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <button
-                type="submit"
-                className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
-                disabled={processing} // Disable button during processing
-              >
-                {processing ? "Processing..." : "Reset Password"}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
+                  disabled={processing} // Disable button during processing
+                >
+                  {processing ? "Processing..." : "Reset Password"}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
