@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { server } from "../../utils/server";
+import { public_key } from "./key";
 
 const Premium = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -20,7 +21,7 @@ const Premium = () => {
           },
         });
 
-        setUserProfile(response.data);
+        setUserProfile(response.data.data);
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
@@ -29,10 +30,37 @@ const Premium = () => {
     fetchUserProfile();
   }, []);
 
+  const handlePaymentSuccess = async (response) => {
+    console.log('Payment response:', response); // Log response for debugging
+
+    // Check if the payment is successful based on the response status or other criteria
+    if (response.status === 'success') { // Modify based on actual response structure
+      try {
+        const token = localStorage.getItem('token');
+        const userId = userProfile._id; // Assuming userProfile has an `_id` property
+
+        // Update user profile to set the membership to 'premium'
+        await axios.put(
+          `${server}/user/${userId}`,
+          { membership: 'premium' },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        console.log('User profile updated to premium membership');
+      } catch (error) {
+        console.error('Error updating user profile:', error);
+      }
+    } else {
+      console.error('Payment was not successful:', response);
+    }
+
+    closePaymentModal(); // Close the payment modal
+  };
+
   const config = {
-    public_key: process.env.PUBLIC_KEY,
-    tx_ref: Date.now(),
-    amount: 45000,
+    public_key: public_key,
+    tx_ref: `tx_${Date.now()}_premium`, // Include plan identifier in tx_ref
+    amount: 31000,
     currency: "RWF",
     payment_options: "card,mobilemoney,ussd",
     customer: {
@@ -42,7 +70,7 @@ const Premium = () => {
     },
     customizations: {
       title: "Premium Plan",
-      description: "Payment for items in cart",
+      description: "Payment for premium plan",
       logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
     },
   };
@@ -50,12 +78,8 @@ const Premium = () => {
   const fwConfig = {
     ...config,
     text: "Get Started",
-    callback: (response) => {
-      console.log(response);
-      console.log(process.env.PUBLIC_KEY);
-      closePaymentModal(); // this will close the modal programmatically
-    },
-    onClose: () => {},
+    callback: handlePaymentSuccess, // Update callback to use handlePaymentSuccess
+    onClose: () => { },
   };
 
   return (
@@ -67,7 +91,7 @@ const Premium = () => {
           Unlock advanced features for optimal performance.
         </p>
         <div className="text-center mb-4">
-          <span className="text-4xl font-bold">RWF 45,000</span>
+          <span className="text-4xl font-bold">RWF 31,000</span>
           <span className="text-gray-100 text-sm">/month</span>
         </div>
       </div>

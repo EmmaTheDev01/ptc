@@ -22,6 +22,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
+import EditAdPage from './pages/dashboard/EditAdPage';
 function App() {
   return (
     <Router>
@@ -46,6 +47,7 @@ function App() {
           <Route path='/messages' element={<AllMessages/>} />
           <Route path='/forgot-password' element={<ForgotPasswordPage/>} />
           <Route path='/reset-password/:token' element={<ResetPasswordPage/>} />
+          <Route path='/edit-ad/:adId' element={<EditAdPage/>} />
         </Routes>
         <ToastContainer />
       </div>

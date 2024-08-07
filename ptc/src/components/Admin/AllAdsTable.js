@@ -2,14 +2,21 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { server } from '../../utils/server';
 import Cookies from 'js-cookie';
-import { FaTrash, FaCheckCircle } from 'react-icons/fa'; // Import FaCheckCircle for approval icon
+import { FaTrash, FaCheckCircle, FaEdit } from 'react-icons/fa'; 
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'; 
 
 const AllAdsTable = () => {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all'); // State to manage filtering ('all', 'approved', 'not-approved')
+  const [filter, setFilter] = useState('all');
+  const navigate = useNavigate();
+
+  // Function to handle navigation to edit page
+  const handleEdit = (adId) => {
+    navigate(`/edit-ad/${adId}`); // Navigate to edit page with ad ID
+  };
 
   // Function to handle the delete request
   const handleDelete = async (adId) => {
@@ -23,41 +30,56 @@ const AllAdsTable = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Filter out the deleted ad from the ads array
       setAds((prevAds) => prevAds.filter(ad => ad._id !== adId));
       toast.success("Ad deleted successfully!");
     } catch (err) {
       console.error('Error deleting ad:', err);
       setError(err.response?.data?.message || err.message || 'Failed to delete ad');
+      toast.error('Failed to delete ad.');
     }
   };
 
-  // Function to handle approving an ad
-  const handleApprove = async (adId) => {
+  // Function to handle toggling ad approval status
+  const handleApproveToggle = async (adId) => {
+    let adToUpdate;
     try {
       const token = localStorage.getItem('token') || Cookies.get('token');
       if (!token) {
         throw new Error('No token found');
       }
 
-      await axios.put(`${server}/adverts/approve/${adId}`, {}, {
+      // Retrieve the ad to update
+      adToUpdate = ads.find(ad => ad._id === adId);
+      if (!adToUpdate) {
+        throw new Error('Ad not found');
+      }
+
+      const newApprovalStatus = !adToUpdate.approved;
+
+      await axios.put(`${server}/adverts/${newApprovalStatus ? 'approve' : 'disapprove'}/${adId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Update the ad locally after approval
       setAds((prevAds) =>
         prevAds.map(ad => {
           if (ad._id === adId) {
-            return { ...ad, approved: true };
+            return { ...ad, approved: newApprovalStatus };
           }
           return ad;
         })
       );
 
-      toast.success("Ad approved successfully!");
+      toast.success(`Ad ${newApprovalStatus ? 'approved' : 'disapproved'} successfully!`);
     } catch (err) {
-      console.error('Error approving ad:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to approve ad');
+      console.error('Error toggling ad approval status:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to toggle ad approval status');
+      
+      // Only show the error toast if adToUpdate is defined
+      if (adToUpdate) {
+        toast.error(`Failed to ${adToUpdate.approved ? 'disapprove' : 'approve'} ad.`);
+      } else {
+        toast.error('Failed to toggle ad approval status.');
+      }
     }
   };
 
@@ -73,7 +95,6 @@ const AllAdsTable = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        // Sort ads by createdAt date from newest to oldest
         const sortedAds = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         setAds(sortedAds);
@@ -87,7 +108,6 @@ const AllAdsTable = () => {
     fetchAds();
   }, []);
 
-  // Function to filter ads based on approval status
   const filterAds = (ads) => {
     if (filter === 'approved') {
       return ads.filter(ad => ad.approved);
@@ -98,7 +118,6 @@ const AllAdsTable = () => {
     }
   };
 
-  // Handle filtering change
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
   };
@@ -120,7 +139,6 @@ const AllAdsTable = () => {
                   View all Advertisements
                 </p>
               </div>
-              {/* Filter buttons */}
               <div className="flex space-x-4">
                 <button
                   onClick={() => handleFilterChange('all')}
@@ -198,18 +216,19 @@ const AllAdsTable = () => {
                           </p>
                         </td>
                         <td className="py-3 px-6 border-b border-blue-gray-200 text-left flex items-center">
-                          {/* Conditionally render either the approve button or approved icon */}
-                          {ad.approved ? (
-                            <FaCheckCircle className="text-green-500 mr-2 cursor-not-allowed" title="Approved" />
-                          ) : (
-                            <button
-                              onClick={() => handleApprove(ad._id)}
-                              className="text-green-500 hover:text-green-700 mr-2 text-center"
-                            >
-                              <FaCheckCircle />
-                            </button>
-                          )}
-                          {/* Delete button */}
+                          <button
+                            onClick={() => handleEdit(ad._id)}
+                            className="text-blue-500 hover:text-blue-700 mr-2 text-center"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleApproveToggle(ad._id)}
+                            className={`text-${ad.approved ? 'red-500 hover:text-red-700' : 'green-500 hover:text-green-700'} mr-2 text-center`}
+                            title={ad.approved ? 'Disapprove' : 'Approve'}
+                          >
+                            <FaCheckCircle className={ad.approved ? 'text-red-500' : 'text-green-500'} />
+                          </button>
                           <button
                             onClick={() => handleDelete(ad._id)}
                             className="text-red-500 hover:text-red-700 text-center"
