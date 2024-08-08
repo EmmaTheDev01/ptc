@@ -16,6 +16,7 @@ const AdvertiseForm = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [redirect, setRedirect] = useState("");
+  const [timeout, setTimeout] = useState(30);
   const navigate = useNavigate();
 
   // Handle form submission
@@ -32,6 +33,7 @@ const AdvertiseForm = () => {
     formData.append("desc", desc);
     formData.append("price", price);
     formData.append("redirect", redirect);
+    formData.append("timeout", timeout);
 
     if (photo.length > 0) {
       photo.forEach((photoFile) => {
@@ -156,6 +158,21 @@ const AdvertiseForm = () => {
               placeholder="Enter your product price..."
             />
           </div>
+          <div className="form-group mb-4">
+            <label htmlFor="timeout" className="text-gray-700 text-sm font-bold mb-2 block">
+              Timeout in seconds
+            </label>
+            <input
+              type="number"
+              id="timeout"
+              name="timeout"
+              value={timeout}
+              onChange={(e) => setTimeout(Number(e.target.value))}
+              className="form-control w-full appearance-none bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              placeholder="Enter your Ad timeout in seconds..."
+            />
+          </div>
+
           <div className="form-group mb-4">
             <label htmlFor="imageUrl" className="text-gray-700 text-sm font-bold mb-2 block">
               Image URL (Optional)

@@ -34,7 +34,7 @@ const Premium = () => {
     console.log('Payment response:', response); // Log response for debugging
 
     // Check if the payment is successful based on the response status or other criteria
-    if (response.status === 'success') { // Modify based on actual response structure
+    if (response.status === 'successful') { // Modify based on actual response structure
       try {
         const token = localStorage.getItem('token');
         const userId = userProfile._id; // Assuming userProfile has an `_id` property
@@ -60,7 +60,7 @@ const Premium = () => {
   const config = {
     public_key: public_key,
     tx_ref: `tx_${Date.now()}_premium`, // Include plan identifier in tx_ref
-    amount: 31000,
+    amount: 100,
     currency: "RWF",
     payment_options: "card,mobilemoney,ussd",
     customer: {

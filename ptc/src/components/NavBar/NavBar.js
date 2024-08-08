@@ -161,7 +161,7 @@ export default function NavBar() {
                             'block px-4 py-2 text-sm w-full text-left',
                             user.membership === 'premium' ? 'bg-gradient-to-r from-[#fec76f] to-yellow-900 text-white' : 'bg-gradient-to-r from-[#29625d] to-green-700 text-white'
                           )}>
-                            {user.membership === 'premium' || user.membership === 'standard' ? 'Premium Member' : 'Free Member'}
+                            {user.membership === 'premium' ? 'Premium Member' : user.membership === 'standard' ? 'Standard Member' : 'Free Member'}
                           </div>
                         </Menu.Item>
                       )}

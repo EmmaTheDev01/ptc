@@ -18,6 +18,7 @@ const EditAd = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [redirect, setRedirect] = useState('');
+  const [timeout, setTimeout] = useState("");
 
   useEffect(() => {
     const fetchAd = async () => {
@@ -39,6 +40,7 @@ const EditAd = () => {
         setImageUrl(fetchedAd.imageUrl);
         setVideoUrl(fetchedAd.videoUrl);
         setRedirect(fetchedAd.redirect);
+        setTimeout(fetchedAd.timeout);
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || err.message || 'Failed to fetch ad');
@@ -67,6 +69,7 @@ const EditAd = () => {
     formData.append("desc", desc);
     formData.append("price", price);
     formData.append("redirect", redirect);
+    formData.append("timeout", timeout);
 
     if (photo.length > 0) {
       photo.forEach((photoFile) => {
@@ -142,6 +145,17 @@ const EditAd = () => {
             id="price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="timeout" className="block text-gray-700 text-sm font-bold mb-2">Timeout:</label>
+          <input
+            type="number"
+            id="timeout"
+            value={timeout}
+            onChange={(e) => setTimeout(e.target.value)}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

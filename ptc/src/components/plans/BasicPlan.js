@@ -38,7 +38,7 @@ const BasicPlan = () => {
   const handlePaymentSuccess = async (response) => {
     console.log('Payment response:', response);
     // Check if the payment is successful based on the response status or other criteria
-    if (response.status === 'success') {
+    if (response.status === 'successful') {
       try {
         const token = localStorage.getItem('token');
         const userId = userProfile._id;
@@ -61,7 +61,7 @@ const BasicPlan = () => {
   const config = {
     public_key: public_key,
     tx_ref: `tx_${Date.now()}_basic`, // Include plan identifier in tx_ref
-    amount: 7500, // Adjust amount as needed
+    amount: 100, // Adjust amount as needed
     currency: 'RWF',
     payment_options: 'card,mobilemoney,ussd',
     customer: {
@@ -121,7 +121,7 @@ const BasicPlan = () => {
           customer={config.customer}
           customizations={config.customizations}
           text="Get Started"
-          callback={handlePaymentSuccess}
+          callback= {response => handlePaymentSuccess(response)}
           onClose={() => { }}
           className="w-full bg-[#29625d] text-white py-2 px-4 rounded-lg hover:bg-[#000] transition duration-300"
         />

@@ -33,6 +33,7 @@ const AdCard = () => {
       if (response.data.success) {
         setUser(response.data.data);
         setLoading(false);
+        fetchAdvertisements(response.data.data.membership); // Pass membership level to fetchAdvertisements
       } else {
         throw new Error("Failed to fetch user data");
       }
@@ -46,7 +47,7 @@ const AdCard = () => {
   };
 
   // Fetch advertisements
-  const fetchAdvertisements = async () => {
+  const fetchAdvertisements = async (membership) => {
     try {
       const token = localStorage.getItem("token") || Cookies.get("token");
       if (!token) throw new Error("No token found");
@@ -56,7 +57,26 @@ const AdCard = () => {
       });
 
       if (response.data.success) {
-        setAdverts(response.data.data);
+        // Adjust ad prices based on user membership
+        const updatedAdverts = response.data.data.map(advert => {
+          let adjustedPrice = advert.price || 0;
+          switch (membership) {
+            case 'premium':
+              adjustedPrice = advert.price;
+              break;
+            case 'standard':
+              adjustedPrice = advert.price / 5;
+              break;
+            case 'basic':
+              adjustedPrice = advert.price / 10;
+              break;
+            default:
+              break;
+          }
+          return { ...advert, price: adjustedPrice };
+        });
+
+        setAdverts(updatedAdverts);
       } else {
         throw new Error("Failed to fetch advertisements");
       }
@@ -77,7 +97,7 @@ const AdCard = () => {
       if (!token) throw new Error("No token found");
 
       const userId = user._id;
-      const adPrice = advert.price || 0; // Use ad price from the advert passed
+      const adPrice = advert.price || 0; // Use the adjusted ad price from the advert
       const currentBalance = user.currentBalance || 0;
 
       const response = await axios.put(
@@ -251,7 +271,6 @@ const AdCard = () => {
   // Fetch user data and advertisements on component mount
   useEffect(() => {
     fetchUserData();
-    fetchAdvertisements();
 
     // Load watched ads from localStorage
     const storedWatchedAds =
@@ -360,7 +379,7 @@ const AdCard = () => {
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                     <span className="mr-2 text-gold"><FaCoins/></span>
+                      <span className="mr-2 text-gold"><FaCoins/></span>
                       <span className="text-[16px] font-semibold text-slate-400">
                         {advert.price} RWF
                       </span>
