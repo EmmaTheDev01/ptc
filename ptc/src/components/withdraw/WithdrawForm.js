@@ -5,6 +5,10 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import PasswordModal from "./PasswordModal";
+// Import the spinner component or define the CSS spinner class here
+import { BounceLoader } from "react-spinners"; // If using react-spinners
+
 const WithdrawForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -17,6 +21,7 @@ const WithdrawForm = () => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // State to control modal visibility
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -51,8 +56,12 @@ const WithdrawForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleWithdrawClick = (e) => {
     e.preventDefault();
+    setModalOpen(true); // Open the modal to verify password
+  };
+
+  const handleConfirmWithdrawal = async () => {
     setLoading(true);
   
     const { fullName, userEmail, phone, amount } = formData;
@@ -96,7 +105,6 @@ const WithdrawForm = () => {
       navigate('/profile')
       window.location.reload();
       // Reset form after successful submission
-      e.target.reset();
       setFormData({
         fullName: "",
         userEmail: "",
@@ -110,13 +118,12 @@ const WithdrawForm = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="flex justify-center mt-10">
       <div className="w-full max-w-lg bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h2 className="text-center text-2xl font-bold mb-6">Withdraw Money</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleWithdrawClick}>
           <div className="mb-4 flex flex-col">
             <label
               htmlFor="fullName"
@@ -185,13 +192,21 @@ const WithdrawForm = () => {
               required
             />
           </div>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center relative">
             <button
               type="submit"
               className="bg-[#29625d] hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               disabled={loading}
             >
-              {loading ? "Processing..." : "Withdraw"}
+              {loading ? (
+                <div className="flex items-center">
+                  <BounceLoader size={20} color={"#ffffff"} /> {/* If using react-spinners */}
+                  {/* <div className="spinner"></div> */} {/* If using CSS spinner */}
+                  <span className="ml-2">Processing...</span>
+                </div>
+              ) : (
+                "Withdraw"
+              )}
             </button>
           </div>
         </form>
@@ -199,6 +214,12 @@ const WithdrawForm = () => {
           Please fill out all fields to withdraw money.
         </p>
       </div>
+      <PasswordModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={handleConfirmWithdrawal}
+        userId={userId}
+      />
     </div>
   );
 };
