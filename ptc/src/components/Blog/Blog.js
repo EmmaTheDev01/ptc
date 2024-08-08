@@ -29,7 +29,7 @@ const Blog = () => {
       title: 'Tips for Maximizing Your Earnings on PTC Sites',
       author: 'Emma Habumugisha',
       date: 'July 20, 2024',
-      content: `Earning money on PTC sites requires strategy and consistency. Here are some tips to maximize your earnings:\n\n1. Stay Active: Regularly log in to check for new ads.\n2. Refer Friends: Invite others to join using your referral link.\n3. Upgrade Membership: Consider upgrading for access to higher-paying ads.\n4. Complete Offers: Participate in surveys and other offers for additional earnings.\n5. Manage Referrals: Monitor your referrals\' activity and provide support.\n\nBy implementing these strategies, you can optimize your earnings and make the most out of your experience on PTC sites.`,
+      content: `Earning money on PTC sites requires strategy and consistency. Here are some tips to maximize your earnings:\n\n1. Stay Active: Regularly log in to check for new ads.\n2. Refer Friends: Invite others to join using your referral link.\n3. Upgrade Membership: Consider upgrading for access to higher-paying ads.\n4. Complete Offers: Participate in surveys and other offers for additional earnings.\n5. Manage Referrals: Monitor your referrals' activity and provide support.\n\nBy implementing these strategies, you can optimize your earnings and make the most out of your experience on PTC sites.`,
     },
   ];
 
@@ -42,26 +42,28 @@ const Blog = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-12">
+    <div className="bg-gray-50 min-h-screen py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-700">From Our Blog</h1>
+        <h1 className="text-4xl font-bold text-center mb-3 text-gray-800">From Our Blog</h1>
+        <p className='text-center mb-12 text-gray-600'>Here is a collection of our latest blog posts.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {blogPosts.map(post => (
-            <div key={post.id} className="bg-white rounded-lg shadow-md p-6 flex flex-col lg:flex-row items-start">
-              <div className="flex-shrink-0 mb-4 lg:mb-0 lg:mr-6">
+            <div key={post.id} className="bg-white rounded-[20px] shadow-lg p-6 flex flex-col">
+              <div className="flex items-center mb-4">
                 <img
-                  className="w-16 h-16 border-2 border-[#29625d] rounded-full object-cover"
+                  className="w-12 h-12 border-4 border-[#29625d] rounded-full object-cover"
                   src={getUserIconUrl(post.author)}
                   alt={post.author}
                 />
+                <div className="ml-4">
+                  <p className="text-lg font-semibold text-gray-600">{post.author}</p>
+                  <p className="text-sm text-gray-500 text-start">{post.date}</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold mb-2 text-gray-800">{post.title}</h2>
-                <p className="text-[#29625d] text-start font-medium mb-2">{post.author}</p>
-                <p className="mt-2 text-gray-600 text-start">{post.content}</p>
-                <p className="text-start mt-4 text-sm text-gray-700 font-medium">{post.date}</p>
-              </div>
+              <h2 className="text-xl font-bold mb-4 text-gray-600">{post.title}</h2>
+              <p className="text-gray-500 mb-4 text-sm">{post.content}</p>
+              <a href="#" className="text-[#29625d] font-semibold hover:underline">Read more</a>
             </div>
           ))}
         </div>
