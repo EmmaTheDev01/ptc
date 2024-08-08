@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import { server } from '../../utils/server';
-import BottomNav from './BottomNav'; 
+import BottomNav from './BottomNav';
 
 export default function NavBar() {
   const { isLoggedIn, logout } = useContext(AuthContext);
@@ -44,7 +44,10 @@ export default function NavBar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    // Add a delay before navigating to the login page
+    setTimeout(() => {
+      navigate('/login');
+    }, 500); // 500ms delay (adjust as needed)
   };
 
   const handleNavigation = (to, openInNewTab = false) => {
