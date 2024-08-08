@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // If using React Router for navigation
 import { FaHome, FaMoneyBill, FaAd, FaUser } from 'react-icons/fa';
+import { FaNoteSticky } from 'react-icons/fa6';
 
 const BottomNav = () => {
   return (
@@ -15,9 +16,9 @@ const BottomNav = () => {
             <FaMoneyBill className="h-6 w-6" />
             <span className="text-xs mt-1">Plans</span>
           </Link>
-          <Link to="/advertise" className="flex flex-col items-center justify-center text-gray-600 hover:text-[#29625d] py-2 px-4">
-            <FaAd className="h-6 w-6" />
-            <span className="text-xs mt-1">Advertise</span>
+          <Link to="/surveys" className="flex flex-col items-center justify-center text-gray-600 hover:text-[#29625d] py-2 px-4">
+            <FaNoteSticky className="h-6 w-6" />
+            <span className="text-xs mt-1">Surveys</span>
           </Link>
           <Link to="/profile" className="flex flex-col items-center justify-center text-gray-600 hover:text-[#29625d] py-2 px-4">
             <FaUser className="h-6 w-6" />

@@ -1,13 +1,26 @@
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const SurveyComponent = () => {
-  return (
-    <>
-        <div className="flex justify-center items-center w-full p-1">
-       <span className="text-gray-500 mt-2">There are currently no surveys available!</span>
-        </div>
-    </>
-  )
-}
+  const navigate = useNavigate(); // Create navigate function using useNavigate
 
-export default SurveyComponent
+  const handleButtonClick = () => {
+    navigate('/earn'); // Navigate to the /earn page
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center w-full h-screen p-4">
+      <span className="text-gray-500 mb-4 text-center">
+        There are currently no surveys available!
+      </span>
+      <button
+        onClick={handleButtonClick}
+        className="px-4 py-2 bg-[#29625d] text-white rounded hover:bg-black"
+      >
+        Go to Earning Page
+      </button>
+    </div>
+  );
+};
+
+export default SurveyComponent;

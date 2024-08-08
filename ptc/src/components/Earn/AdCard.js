@@ -18,6 +18,7 @@ const AdCard = () => {
   const [youtubeVideoId, setYoutubeVideoId] = useState(""); // To store YouTube video ID
   const [pageLeftTime, setPageLeftTime] = useState(null); // Track when the user leaves the page
   const [startTime, setStartTime] = useState(null); // Track when the ad view started
+  const [watchedAds, setWatchedAds] = useState([]); // State to store watched ads IDs
 
   // Fetch user data
   const fetchUserData = async () => {
@@ -30,9 +31,11 @@ const AdCard = () => {
       });
 
       if (response.data.success) {
-        setUser(response.data.data);
+        const userData = response.data.data;
+        setUser(userData);
+        setWatchedAds(userData.watchedAds || []); // Store watched ads IDs
         setLoading(false);
-        fetchAdvertisements(response.data.data.membership); // Pass membership level to fetchAdvertisements
+        fetchAdvertisements(userData.membership); // Pass membership level to fetchAdvertisements
       } else {
         throw new Error("Failed to fetch user data");
       }
@@ -57,23 +60,24 @@ const AdCard = () => {
 
       if (response.data.success) {
         // Adjust ad prices based on user membership
-        const updatedAdverts = response.data.data.map(advert => {
+        const updatedAdverts = response.data.data.map((advert) => {
           let adjustedPrice = advert.price || 0;
           switch (membership) {
-            case 'premium':
+            case "premium":
               adjustedPrice = advert.price;
               break;
-            case 'standard':
+            case "standard":
               adjustedPrice = advert.price / 5;
               break;
-            case 'basic':
+            case "basic":
               adjustedPrice = advert.price / 10;
               break;
             default:
               break;
           }
           return { ...advert, price: adjustedPrice };
-        });
+        }).filter(advert => !watchedAds.includes(advert._id)) // Filter out watched ads
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)); // Sort by updatedAt descending
 
         setAdverts(updatedAdverts);
       } else {
@@ -83,8 +87,8 @@ const AdCard = () => {
       console.error("Error fetching advertisements:", error);
       setError(
         error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch advertisements"
+          error.message ||
+          "Failed to fetch advertisements"
       );
     }
   };
@@ -94,40 +98,35 @@ const AdCard = () => {
     try {
       const token = localStorage.getItem("token") || Cookies.get("token");
       if (!token) throw new Error("No token found");
-  
+
       const userId = user._id;
       const adPrice = advert.price || 0; // Use the adjusted ad price from the advert
       const currentBalance = user.currentBalance || 0;
-  
+
       // Prepare the request data
       const updateData = {
         currentBalance: currentBalance + adPrice,
-        watchedAds: [...user.watchedAds, advert._id] // Add the watched ad ID
+        watchedAds: [...user.watchedAds, advert._id], // Add the watched ad ID
       };
-  
+
       // Send the update request
-      const response = await axios.put(
-        `${server}/user/${userId}`,
-        updateData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
+      const response = await axios.put(`${server}/user/${userId}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (response.data.success) {
         setUser(response.data.data);
+        setWatchedAds(response.data.data.watchedAds); // Update watched ads state
         toast.success(`Ad Watched! Your balance is updated with ${adPrice} RWF.`);
       } else {
-        throw new Error(
-          response.data.message || "Failed to update user balance"
-        );
+        throw new Error(response.data.message || "Failed to update user balance");
       }
     } catch (error) {
       console.error("Error updating user balance:", error);
       setError(
         error.response?.data?.message ||
-        error.message ||
-        "Failed to update user balance"
+          error.message ||
+          "Failed to update user balance"
       );
     }
   };
@@ -162,10 +161,7 @@ const AdCard = () => {
 
   // Check if the URL is a YouTube video URL
   const isYouTubeVideoUrl = (url) => {
-    return (
-      url.includes("youtube.com") ||
-      url.includes("youtu.be")
-    );
+    return url.includes("youtube.com") || url.includes("youtu.be");
   };
 
   // Extract YouTube Video ID from URL
@@ -214,7 +210,9 @@ const AdCard = () => {
         updateFaviconAndTitle(0);
 
         if (adViewed) {
-          await updateUserBalance(adverts.find(advert => advert.redirect === adUrl)); // Update balance with the correct ad price
+          await updateUserBalance(
+            adverts.find((advert) => advert.redirect === adUrl)
+          ); // Update balance with the correct ad price
         } else {
           toast.error("Please make sure to view the ad.");
           // Notify server to cancel the reward
@@ -284,6 +282,17 @@ const AdCard = () => {
   // Render error message if there is an error
   if (error) return <div>Error: {error}</div>;
 
+  // Render no ads message if there are no advertisements
+  if (adverts.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-center">
+          There are currently no ads available. You can earn by referring new users using your referral code.
+        </p>
+      </div>
+    );
+  }
+
   // Render the ad card once data is loaded
   return (
     <div className="pt-2 mb-20 md:mb-0 min-h-screen z-100"> {/* Apply mb-20 only on smaller screens */}
@@ -298,7 +307,7 @@ const AdCard = () => {
               {adverts.map((advert) => (
                 <article
                   key={advert._id}
-                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${user?.watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
+                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer ${user?.watchedAds.includes(advert._id) ? 'opacity-50 pointer-events-none' : ''
                     }`}
                 >
                   <div
@@ -375,7 +384,9 @@ const AdCard = () => {
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                      <span className="mr-2 text-gold"><FaCoins/></span>
+                      <span className="mr-2 text-gold">
+                        <FaCoins />
+                      </span>
                       <span className="text-[16px] font-semibold text-slate-400">
                         {advert.price} RWF
                       </span>

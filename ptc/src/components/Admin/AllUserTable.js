@@ -12,35 +12,33 @@ const AllUserTable = () => {
   const [bonusGivenUsers, setBonusGivenUsers] = useState(new Set());
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No token found');
-        }
-
-        const response = await axios.get(`${server}/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log('API Response:', response.data);
-
-        const sortedUsers = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        setUsers(sortedUsers);
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
   }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const response = await axios.get(`${server}/user`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const sortedUsers = response.data.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setUsers(sortedUsers);
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
+      toast.error(`Error fetching users: ${err.message}`);
+    }
+  };
 
   const handleMembershipFilter = (membership) => {
     setSelectedMembership((prevMembership) =>
@@ -49,48 +47,7 @@ const AllUserTable = () => {
   };
 
   const countReferralOccurrences = (referralCode) => {
-    return users.filter(user => user.referredBy === referralCode).length;
-  };
-
-  const updateReferrerBalance = async (referrerId, bonusAmount) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No token found');
-      }
-
-      // Fetch the referrer’s current balance
-      const referrerResponse = await axios.get(`${server}/user/${referrerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const referrer = referrerResponse.data;
-
-      // Update the referrer’s balance
-      await axios.patch(`${server}/user/${referrerId}`, 
-      { 
-        currentBalance: referrer.currentBalance + bonusAmount
-      }, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Notify admin
-      toast.success('Bonus added to referrer!');
-
-      // Refresh users list after update
-      const response = await axios.get(`${server}/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUsers(response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-    } catch (err) {
-      setError(err);
-    }
+    return users.filter((user) => user.referredBy === referralCode).length;
   };
 
   const handleUpdateBalance = async (userId) => {
@@ -100,54 +57,72 @@ const AllUserTable = () => {
         throw new Error('No token found');
       }
 
-      // Find the referred user
-      const referredUser = users.find(user => user._id === userId);
+      const referredUser = users.find((user) => user._id === userId);
       if (!referredUser) {
         throw new Error('User not found');
       }
 
-      // Check the number of times the referral code is used
       const referralCount = countReferralOccurrences(referredUser.referralCode);
 
       if (referralCount >= 3) {
-        // Update the referred user's balance and reset their bonus
-        await axios.put(`${server}/user/${userId}`, 
-        { 
-          currentBalance: referredUser.currentBalance + 500, 
-          bonus: 0 
-        }, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const bonusAmount = 500;
 
-        // Notify admin
+        await axios.put(
+          `${server}/user/${userId}`,
+          {
+            currentBalance: referredUser.currentBalance + bonusAmount,
+            bonus: 0,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
         toast.success('Bonus added to referred user!');
 
-        // Fetch users again to get the updated data
-        const response = await axios.get(`${server}/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const updatedUsers = response.data.data;
+        await fetchUsers(); // Refresh user list after update
 
-        // Find the referrer of this user
         if (referredUser.referredBy) {
-          const referrer = updatedUsers.find(user => user.referralCode === referredUser.referredBy);
+          const referrer = users.find(
+            (user) => user.referralCode === referredUser.referredBy
+          );
           if (referrer) {
-            await updateReferrerBalance(referrer._id, 500);
+            await updateReferrerBalance(referrer._id, bonusAmount);
           }
         }
 
-        setUsers(updatedUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-        setBonusGivenUsers(prev => new Set(prev.add(userId))); // Mark the bonus as given
+        setBonusGivenUsers((prev) => new Set(prev.add(userId)));
       } else {
-        toast.error('Referral code must be used at least 3 times to be eligible for a bonus.');
+        toast.error(
+          'Referral code must be used at least 3 times to be eligible for a bonus.'
+        );
       }
     } catch (err) {
       setError(err);
+      toast.error(`Error updating balance: ${err.message}`);
+    }
+  };
+
+  const updateReferrerBalance = async (referrerId, bonusAmount) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const referrerResponse = await axios.get(`${server}/user/${referrerId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const referrer = referrerResponse.data;
+
+      await axios.patch(
+        `${server}/user/${referrerId}`,
+        { currentBalance: referrer.currentBalance + bonusAmount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success('Bonus added to referrer!');
+    } catch (err) {
+      setError(err);
+      toast.error(`Error updating referrer balance: ${err.message}`);
     }
   };
 
@@ -163,7 +138,6 @@ const AllUserTable = () => {
     ? users.filter((user) => user.membership === selectedMembership)
     : users;
 
-  // Calculate referral counts for display purposes
   const referralCounts = filteredUsers.reduce((acc, user) => {
     if (user.referralCode) {
       const count = countReferralOccurrences(user.referralCode);
@@ -284,9 +258,7 @@ const AllUserTable = () => {
                           <div className="flex bg-gray-200 rounded-full overflow-hidden h-1">
                             <div
                               className="bg-blue-600 text-white"
-                              style={{
-                                width: `${(user.currentBalance || 0) * 10}%`,
-                              }}
+                              style={{ width: `${(user.currentBalance || 0) * 10}%` }}
                             ></div>
                           </div>
                         </td>
@@ -303,9 +275,7 @@ const AllUserTable = () => {
                           <div className="flex bg-gray-200 rounded-full overflow-hidden h-1">
                             <div
                               className="bg-blue-600 text-white"
-                              style={{
-                                width: `${(user.requests || 0) * 10}%`,
-                              }}
+                              style={{ width: `${(user.requests || 0) * 10}%` }}
                             ></div>
                           </div>
                         </td>
@@ -313,7 +283,9 @@ const AllUserTable = () => {
                           {user.createdAt.split('T')[0]}
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
-                          {bonusGivenUsers.has(user._id) ? (
+                          {user.bonus === 0 ? (
+                            <span className="text-green-600 font-medium">Bonus Given</span>
+                          ) : bonusGivenUsers.has(user._id) ? (
                             <span className="text-green-600 font-medium">Bonus Given</span>
                           ) : countReferralOccurrences(user.referralCode) >= 3 ? (
                             <button

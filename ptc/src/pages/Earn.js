@@ -1,24 +1,22 @@
 import React, { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar/NavBar';
 import AdCard from '../components/Earn/AdCard';
 import Footer from '../components/Footer';
 import { AuthContext } from '../context/AuthContext';
 
 const Earn = () => {
-  const { isLoggedIn } = useContext(AuthContext);
-  const navigate = useNavigate(); // Initialize navigate function
+  const { isLoggedIn, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication status when component mounts
-    if (!isLoggedIn) {
-      navigate('/login'); // Navigate to login page if not logged in
+    if (!isLoggedIn && !loading) {
+      navigate('/login');
     }
-  }, [isLoggedIn, navigate]); // Dependencies: re-run effect if isLoggedIn or navigate changes
+  }, [isLoggedIn, loading, navigate]);
 
-  // Optionally return a loading spinner or placeholder while checking authentication
-  if (!isLoggedIn) {
-    return <div>Loading...</div>; // Render a loading indicator or null while redirecting
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (

@@ -182,6 +182,11 @@ const AllAdsTable = () => {
                       </th>
                       <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
                         <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
+                          Redirect
+                        </p>
+                      </th>
+                      <th className="border-b border-blue-gray-200 py-3 px-6 text-left">
+                        <p className="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400">
                           Date
                         </p>
                       </th>
@@ -207,7 +212,12 @@ const AllAdsTable = () => {
                         </td>
                         <td className="py-3 px-6 border-b border-blue-gray-200">
                           <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                            RWF {ad.price}
+                            {ad.price}
+                          </p>
+                        </td>
+                        <td className="py-3 px-6 border-b border-blue-gray-200">
+                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
+                            <a href={ad.redirect} target='_blank' className='text-blue-500' rel="noreferrer">{ad.redirect}</a>
                           </p>
                         </td>
                         <td className="py-3 px-6 border-b border-blue-gray-200">

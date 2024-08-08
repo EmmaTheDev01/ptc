@@ -130,7 +130,7 @@ const Premium = () => {
               d="M5 13l4 4L19 7"
             />
           </svg>
-          <span>Unlimited Withdrawals</span>
+          <span>10X earning per ad</span>
         </li>
         <li className="flex items-center text-gray-700">
           <svg

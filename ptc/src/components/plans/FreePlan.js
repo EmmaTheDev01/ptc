@@ -47,7 +47,7 @@ const FreePlan = () => {
               d="M5 13l4 4L19 7"
             />
           </svg>
-          <span>Withdraw RWF 5,000 per day</span>
+          <span>Less earnings</span>
         </li>
         <li className="flex items-center text-gray-700">
           <svg
