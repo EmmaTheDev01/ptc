@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { server } from "../../utils/server";
 import { FaCoins } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner"; // Import TailSpin
 
 const AdCard = () => {
   const [adverts, setAdverts] = useState([]);
@@ -80,6 +81,7 @@ const AdCard = () => {
         .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)); // Sort by updatedAt descending
 
         setAdverts(updatedAdverts);
+        setLoading(false); // Set loading to false once ads are fetched
       } else {
         throw new Error("Failed to fetch advertisements");
       }
@@ -90,6 +92,7 @@ const AdCard = () => {
           error.message ||
           "Failed to fetch advertisements"
       );
+      setLoading(false); // Set loading to false on error
     }
   };
 
@@ -276,11 +279,20 @@ const AdCard = () => {
   const getToken = () =>
     localStorage.getItem("token") || Cookies.get("token");
 
-  // Render loading state if data is still loading
-  if (loading) return <div>Loading...</div>;
+  // Render loading spinner if data is still loading
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <TailSpin
+        height="80"
+        width="80"
+        color="#29625d"
+        ariaLabel="loading"
+      />
+    </div>
+  );
 
   // Render error message if there is an error
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
   // Render no ads message if there are no advertisements
   if (adverts.length === 0) {

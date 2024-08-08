@@ -42,7 +42,7 @@ const Premium = () => {
         // Update user profile to set the membership to 'premium'
         await axios.put(
           `${server}/user/${userId}`,
-          { membership: 'premium' },
+          { membership: "premium", membershipUpdatedAt: Date.now() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

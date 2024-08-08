@@ -45,7 +45,7 @@ const BasicPlan = () => {
         const plan = response.tx_ref;
         await axios.put(
           `${server}/user/${userId}`,
-          { membership: "standard" },
+          { membership: "standard", membershipUpdatedAt: Date.now() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch (error) {
