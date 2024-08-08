@@ -33,10 +33,50 @@ const AllUserTable = () => {
 
       setUsers(sortedUsers);
       setLoading(false);
+
+      // Update memberships if needed
+      await updateExpiredMemberships(sortedUsers);
     } catch (err) {
       setError(err);
       setLoading(false);
       toast.error(`Error fetching users: ${err.message}`);
+    }
+  };
+
+  const updateExpiredMemberships = async (users) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const today = new Date();
+      const updatedUsers = [];
+
+      for (const user of users) {
+        if (user.membershipUpdatedAt) {
+          const membershipDate = new Date(user.membershipUpdatedAt);
+          const daysDifference = Math.floor((today - membershipDate) / (1000 * 60 * 60 * 24));
+
+          if (daysDifference > 30 && user.membership !== 'basic') {
+            // Update user membership to 'basic'
+            await axios.patch(
+              `${server}/user/${user._id}`,
+              { membership: 'basic' },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            updatedUsers.push(user._id);
+          }
+        }
+      }
+
+      if (updatedUsers.length > 0) {
+        toast.success('Expired memberships updated to Basic!');
+        await fetchUsers(); // Refresh user list after updating
+      }
+    } catch (err) {
+      setError(err);
+      toast.error(`Error updating memberships: ${err.message}`);
     }
   };
 
@@ -215,6 +255,9 @@ const AllUserTable = () => {
                         Email
                       </th>
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                         DOM
+                      </th>
+                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Membership
                       </th>
                       <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -245,6 +288,9 @@ const AllUserTable = () => {
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
                           {user.email}
+                        </td>
+                        <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
+                          {user.membershipUpdatedAt ? 'Active' : 'Inactive'}
                         </td>
                         <td className="py-3 px-6 whitespace-nowrap text-sm text-gray-500">
                           <p className={`font-medium ${getMembershipColor(user.membership)}`}>
