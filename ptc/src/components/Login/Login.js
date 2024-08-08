@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "react-google-login";
 import { server } from "../../utils/server";
+import LoadingOverlay from "./LoadingOverlay"; // Import the overlay component
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,10 +25,9 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      login();
+      // Call login from AuthContext with token and role
+      login(googleResponse.data.token, googleResponse.data.role);
       toast.success("Login Successful!");
-      localStorage.setItem("token", googleResponse.data.token);
-      localStorage.setItem("role", googleResponse.data.role);
 
       // Add a delay before navigation
       setTimeout(() => navigate("/earn"), 500); // 500ms delay
@@ -54,10 +54,9 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      login();
+      // Call login from AuthContext with token and role
+      login(response.data.token, response.data.role);
       toast.success("Login Successful!");
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("role", response.data.role);
 
       // Add a delay before navigation
       setTimeout(() => navigate("/earn"), 500); // 500ms delay
@@ -157,6 +156,9 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* Render loading overlay if processing */}
+      {processing && <LoadingOverlay />}
     </div>
   );
 };

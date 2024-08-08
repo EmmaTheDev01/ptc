@@ -7,18 +7,17 @@ import { server } from "../../utils/server";
 import { FaCoins } from "react-icons/fa";
 
 const AdCard = () => {
-  const [watchedAds, setWatchedAds] = useState([]);
-  const [timer, setTimer] = useState(30);
   const [adverts, setAdverts] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [adViewed, setAdViewed] = useState(false);
   const [adUrl, setAdUrl] = useState(""); // To store the ad URL
-  const [startTime, setStartTime] = useState(null); // Track when the ad view started
-  const [pageLeftTime, setPageLeftTime] = useState(null); // Track when the user leaves the page
+  const [timer, setTimer] = useState(30); // Timer state
   const [videoUrl, setVideoUrl] = useState(""); // To store the video URL
   const [youtubeVideoId, setYoutubeVideoId] = useState(""); // To store YouTube video ID
+  const [pageLeftTime, setPageLeftTime] = useState(null); // Track when the user leaves the page
+  const [startTime, setStartTime] = useState(null); // Track when the ad view started
 
   // Fetch user data
   const fetchUserData = async () => {
@@ -95,19 +94,26 @@ const AdCard = () => {
     try {
       const token = localStorage.getItem("token") || Cookies.get("token");
       if (!token) throw new Error("No token found");
-
+  
       const userId = user._id;
       const adPrice = advert.price || 0; // Use the adjusted ad price from the advert
       const currentBalance = user.currentBalance || 0;
-
+  
+      // Prepare the request data
+      const updateData = {
+        currentBalance: currentBalance + adPrice,
+        watchedAds: [...user.watchedAds, advert._id] // Add the watched ad ID
+      };
+  
+      // Send the update request
       const response = await axios.put(
         `${server}/user/${userId}`,
-        { currentBalance: currentBalance + adPrice },
+        updateData,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+  
       if (response.data.success) {
         setUser(response.data.data);
         toast.success(`Ad Watched! Your balance is updated with ${adPrice} RWF.`);
@@ -128,19 +134,14 @@ const AdCard = () => {
 
   // Handle ad view actions
   const handleAdView = (advert) => {
-    if (watchedAds.includes(advert._id)) {
+    if (user.watchedAds.includes(advert._id)) {
       return; // Prevent re-watching the same ad
     }
-
-    setWatchedAds((prevWatchedAds) => {
-      const updatedWatchedAds = [...prevWatchedAds, advert._id];
-      localStorage.setItem("watchedAds", JSON.stringify(updatedWatchedAds));
-      return updatedWatchedAds;
-    });
 
     setAdUrl(advert.redirect); // Store the ad URL
     setAdViewed(true); // Mark ad as viewed
     setStartTime(Date.now()); // Track when the ad view started
+    setTimer(advert.timeout || 30); // Set the timer from advert.timeout or default to 30 seconds
 
     if (advert.videoUrl) {
       setVideoUrl(advert.videoUrl); // Set video URL if available
@@ -228,7 +229,7 @@ const AdCard = () => {
 
         // Reset states after timer ends
         setAdViewed(false);
-        setTimer(30);
+        setTimer(30); // Reset timer to default value
         setStartTime(null);
         setVideoUrl(""); // Reset video URL
         setYoutubeVideoId(""); // Reset YouTube video ID
@@ -238,7 +239,7 @@ const AdCard = () => {
     performAdActions();
 
     return () => clearTimeout(countdown);
-  }, [adViewed, timer, adUrl]);
+  }, [adViewed, timer, adUrl, adverts]);
 
   // Handle visibility change
   useEffect(() => {
@@ -250,7 +251,7 @@ const AdCard = () => {
           const timeSpentAway = (Date.now() - pageLeftTime) / 1000;
           if (timeSpentAway < 30) {
             setAdViewed(false);
-            setTimer(30);
+            setTimer(30); // Reset timer to default value
             setStartTime(null);
             toast.error("Please finish viewing the ad.");
           }
@@ -271,11 +272,6 @@ const AdCard = () => {
   // Fetch user data and advertisements on component mount
   useEffect(() => {
     fetchUserData();
-
-    // Load watched ads from localStorage
-    const storedWatchedAds =
-      JSON.parse(localStorage.getItem("watchedAds")) || [];
-    setWatchedAds(storedWatchedAds);
   }, []);
 
   // Helper function to get token from local storage or cookies
@@ -302,7 +298,7 @@ const AdCard = () => {
               {adverts.map((advert) => (
                 <article
                   key={advert._id}
-                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
+                  className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer border flex flex-col ${user?.watchedAds.includes(advert._id) ? 'pointer-events-none opacity-50' : ''
                     }`}
                 >
                   <div

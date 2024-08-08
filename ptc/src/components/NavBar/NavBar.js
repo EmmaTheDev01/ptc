@@ -47,14 +47,18 @@ export default function NavBar() {
     navigate('/login');
   };
 
-  const handleNavigation = (to) => {
-    navigate(to);
+  const handleNavigation = (to, openInNewTab = false) => {
+    if (openInNewTab) {
+      window.open(to, '_blank'); // Open URL in a new tab
+    } else {
+      navigate(to); // Navigate to URL in the same tab
+    }
   };
 
   const userNavigation = [
     { name: 'Your Profile', to: '/profile' },
     ...(user && user.role === 'admin'
-      ? [{ name: 'Dashboard', to: '/dashboard' }]
+      ? [{ name: 'Dashboard', to: '/dashboard', openInNewTab: true }] // Open Dashboard in a new tab
       : [{ name: 'Advertise', to: '/advertise' }]),
     { name: 'Sign out', onClick: handleLogout },
   ];
@@ -65,7 +69,6 @@ export default function NavBar() {
 
   return (
     <>
-      {/* Remove the surrounding div with min-h-screen and flex flex-col */}
       {/* Top Navigation */}
       <Disclosure as="nav" className="bg-white shadow-md relative z-50">
         {({ open }) => (
@@ -130,7 +133,7 @@ export default function NavBar() {
                         <Menu.Item key={item.name}>
                           {({ active }) => (
                             <button
-                              onClick={() => item.onClick ? item.onClick() : handleNavigation(item.to)}
+                              onClick={() => item.onClick ? item.onClick() : handleNavigation(item.to, item.openInNewTab)}
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700 w-full text-left'

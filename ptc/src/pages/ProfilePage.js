@@ -1,15 +1,32 @@
-import React from 'react'
-import Profile from '../components/profile/Profile'
-import NavBar from '../components/NavBar/NavBar'
-import Footer from '../components/Footer'
-const ProfilePage = () => {
-    return (
-        <div>
-            <NavBar />
-            <Profile />
-            <Footer />
-        </div>
-    )
-}
+import React, { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import NavBar from '../components/NavBar/NavBar';
+import Profile from '../components/profile/Profile';
+import Footer from '../components/Footer';
+import { AuthContext } from '../context/AuthContext'; 
 
-export default ProfilePage
+const ProfilePage = () => {
+  const { isLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+  
+    if (!isLoggedIn) {
+      navigate('/login'); 
+    }
+  }, [isLoggedIn, navigate]);
+
+  if (!isLoggedIn) {
+    return <div>Loading...</div>; 
+  }
+
+  return (
+    <div>
+      <NavBar />
+      <Profile />
+      <Footer />
+    </div>
+  );
+};
+
+export default ProfilePage;
