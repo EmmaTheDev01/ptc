@@ -31,3 +31,24 @@ code {
   }
 }
 
+/* Define tailSpin animation */
+@keyframes tailSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.tail-spin {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #29625d;
+  animation: tailSpin 1s infinite linear;
+}
+
+

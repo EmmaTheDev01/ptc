@@ -4,6 +4,13 @@ import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { server } from "../../utils/server";
 import { Link } from "react-router-dom";
 
+// Spinner Component
+const Spinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <div className="tail-spin"></div>
+  </div>
+);
+
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +36,7 @@ const Profile = () => {
           setUserData(response.data.data);
         } else {
           setError(new Error("No token found"));
+          window.location.reload();
         }
         setLoading(false);
       } catch (err) {
@@ -53,7 +61,7 @@ const Profile = () => {
     );
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p>Error fetching data: {error.message}</p>;
 
   // Check if user has either "standard" or "premium" membership
@@ -61,7 +69,7 @@ const Profile = () => {
     userData?.membership === "standard" || userData?.membership === "premium";
 
   return (
-    <div className="bg-gray-100 h-full mt-6 w-[90%] ml-auto mr-auto mb-20">
+    <div className="bg-gray-100 h-full mt-6 w-[90%] mx-auto mb-20">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
         <div className="md:flex no-wrap md:-mx-2">
           <div className="w-full md:w-3/12 md:mx-2">
@@ -79,7 +87,7 @@ const Profile = () => {
               <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
                 {userData?.username || "Loading..."}
               </h1>
-              <p 
+              <p
                 className="text-sm font-bold text-black hover:text-gray-600 leading-6 cursor-pointer"
                 onClick={() => copyToClipboard(userData?.referralCode || '')}
               >
@@ -97,12 +105,13 @@ const Profile = () => {
                   <span>Membership</span>
                   <span className="ml-auto">
                     <span
-                      className={`py-1 px-2 rounded text-white text-sm ${userData?.membership === "premium"
+                      className={`py-1 px-2 rounded text-white text-sm ${
+                        userData?.membership === "premium"
                           ? "bg-[#DAA520]"
                           : userData?.membership === "standard"
                             ? "bg-[#c0c0c0]"
                             : "bg-green-500"
-                        }`}
+                      }`}
                     >
                       {userData?.membership || "No Membership"}
                     </span>
@@ -116,7 +125,7 @@ const Profile = () => {
                   </span>
                 </li>
               </ul>
-              {canAdvertise && ( // Render the button conditionally
+              {canAdvertise && (
                 <div className="w-full mt-4">
                   <Link to="/advertise">
                     <button className="bg-[#29625d] p-3 shadow-sm rounded-md hover:bg-black w-full">
@@ -201,16 +210,16 @@ const Profile = () => {
                     ? userData?.withdrawnBalance
                     : userData?.withdrawnBalance + ".00"}
                 </p>
-                <p className="text-sm mt-4 text-gray-400">Through withdraw, we tax you with the 26% of the amount you are withdrawing</p>
+                <p className="text-sm mt-4 text-gray-400">
+                  Through withdraw, we tax you 0.00 to support our community.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Notification */}
       {notification && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-md shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded">
           {notification}
         </div>
       )}

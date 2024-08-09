@@ -40,14 +40,14 @@ const AdvertiseForm = () => {
           }
         });
 
-        if (response.data.membership === 'premium' || isAdmin) {
+        if (response.data.data.membership === 'premium' || isAdmin) {
           setUserMembership(response.data.membership);
         } else {
           navigate("/get-started"); // Redirect if not premium or admin
         }
       } catch (error) {
         console.error("Error fetching user membership:", error);
-        navigate("/login"); // Redirect to login on error
+        navigate("/login"); 
       }
     };
 

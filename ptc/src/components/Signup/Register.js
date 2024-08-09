@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { GoogleLogin } from "react-google-login";
 import { server } from "../../utils/server";
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import LoadingOverlayComponent from "../LoadingOverlayComponent";
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
@@ -170,7 +171,7 @@ const RegistrationForm = () => {
                 className="btn-primary w-full py-3 rounded-lg bg-[#29625d] text-white font-semibold transition duration-300 hover:bg-[#fed592] shadow-md"
                 disabled={loading} // Disable button during processing
               >
-                {loading ? "Processing..." : "Sign Up"}
+                {loading ? <LoadingOverlayComponent/> : "Sign Up"}
               </button>
             </form>
             <p className="mt-8 text-sm text-gray-600">

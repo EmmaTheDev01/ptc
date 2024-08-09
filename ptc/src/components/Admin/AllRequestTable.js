@@ -7,7 +7,61 @@ const AllRequestTable = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showApproved, setShowApproved] = useState(false); // State for showing approved requests only
+  const [showApproved, setShowApproved] = useState(false);
+  const [todayTotal, setTodayTotal] = useState(0);
+  const [dailyTotals, setDailyTotals] = useState({});
+  const [userWithdrawals, setUserWithdrawals] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [totalDeducted, setTotalDeducted] = useState(0);
+  const [totalPercentageDeducted, setTotalPercentageDeducted] = useState(0);
+  const [totalUnapprovedDeducted, setTotalUnapprovedDeducted] = useState(0);
+  const [totalUnapprovedPercentageDeducted, setTotalUnapprovedPercentageDeducted] = useState(0);
+  const [totalApprovedAmount, setTotalApprovedAmount] = useState(0);
+
+  // Helper function to get month in "YYYY-MM" format
+  const getMonthYear = (date) => {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  // Function to calculate amount after tax based on withdrawal count
+  const calculateAmountAfterTax = (amount, userId, createdAt) => {
+    const withdrawalCount = userWithdrawals[userId]?.count || 0;
+    const withdrawalMonth = getMonthYear(createdAt);
+    const currentMonth = getMonthYear(new Date());
+
+    if (withdrawalMonth === currentMonth) {
+      if (withdrawalCount === 1) {
+        return amount * (1 - 0.085); // 8.5% deduction for the first withdrawal
+      } else if (withdrawalCount > 1) {
+        return amount * (1 - 0.14); // 14% deduction for subsequent withdrawals
+      }
+    }
+    return amount * (1 - 0.085); // Default rate if no specific case
+  };
+
+  // Function to calculate the total amount deducted and percentage deducted
+  const calculateTotals = (requests, includeApproved) => {
+    let totalDeducted = 0;
+    let totalOriginal = 0;
+    let totalApproved = 0;
+
+    requests.forEach(request => {
+      if (request.approved === includeApproved) {
+        const originalAmount = request.amount;
+        const deductedAmount = calculateAmountAfterTax(originalAmount, request.userId, request.createdAt);
+        totalOriginal += originalAmount;
+        totalDeducted += (originalAmount - deductedAmount);
+
+        if (includeApproved) {
+          totalApproved += originalAmount;
+        }
+      }
+    });
+
+    const totalPercentageDeducted = (totalOriginal === 0) ? 0 : ((totalDeducted / totalOriginal) * 100);
+    return { totalDeducted, totalPercentageDeducted, totalApproved };
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -22,17 +76,66 @@ const AllRequestTable = () => {
         });
 
         if (response.data.success) {
-          // Map and format requests with date
           let requestsWithData = response.data.data.map(request => ({
             ...request,
-            createdAt: new Date(request.createdAt).toLocaleDateString('en-US'), // Format the date as needed
+            createdAt: new Date(request.createdAt).toLocaleDateString('en-US'),
           }));
 
-          // Sort requests by date from newest to oldest
-          requestsWithData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          // Update user withdrawal tracking
+          const userWithdrawalCounts = requestsWithData.reduce((acc, request) => {
+            const userId = request.userId;
+            const month = getMonthYear(request.createdAt);
+            if (!acc[userId]) {
+              acc[userId] = { count: 0, firstWithdrawal: request.createdAt, month };
+            }
+            if (acc[userId].month === month) {
+              acc[userId].count++;
+            } else {
+              acc[userId] = { count: 1, firstWithdrawal: request.createdAt, month };
+            }
+            return acc;
+          }, {});
 
-          // Update state with sorted requests
+          requestsWithData = requestsWithData.map(request => ({
+            ...request,
+            isSecondRequest: userWithdrawalCounts[request.userId]?.count > 1,
+          }));
+
+          // Sort requests: unapproved first, then by date (new to old)
+          requestsWithData.sort((a, b) => {
+            if (a.approved !== b.approved) {
+              return a.approved ? 1 : -1; // Unapproved first
+            }
+            return new Date(b.createdAt) - new Date(a.createdAt); // New to old
+          });
+
           setRequests(requestsWithData);
+
+          const today = new Date().toLocaleDateString('en-US');
+          const dailyTotals = requestsWithData.reduce((acc, request) => {
+            const date = request.createdAt;
+            if (!acc[date]) {
+              acc[date] = 0;
+            }
+            acc[date] += request.amount;
+            return acc;
+          }, {});
+
+          setDailyTotals(dailyTotals);
+          setTodayTotal(dailyTotals[today] || 0);
+
+          // Calculate totals
+          const { totalDeducted, totalPercentageDeducted, totalApproved } = calculateTotals(requestsWithData, true);
+          setTotalDeducted(totalDeducted);
+          setTotalPercentageDeducted(totalPercentageDeducted);
+          setTotalApprovedAmount(totalApproved);
+
+          const { totalDeducted: unapprovedDeducted, totalPercentageDeducted: unapprovedPercentage } = calculateTotals(requestsWithData, false);
+          setTotalUnapprovedDeducted(unapprovedDeducted);
+          setTotalUnapprovedPercentageDeducted(unapprovedPercentage);
+
+          setUserWithdrawals(userWithdrawalCounts);
+
         } else {
           console.error('Failed to fetch requests:', response.data.message);
           setError(response.data.message || 'Failed to fetch requests');
@@ -69,6 +172,21 @@ const AllRequestTable = () => {
             request._id === id ? { ...request, approved: true } : request
           );
           setRequests(updatedRequests);
+
+          setSuccessMessage(`Request for ${amount} RWF has been approved successfully!`);
+
+          setTimeout(() => setSuccessMessage(''), 3000);
+
+          // Update totals
+          const { totalDeducted, totalPercentageDeducted, totalApproved } = calculateTotals(updatedRequests, true);
+          setTotalDeducted(totalDeducted);
+          setTotalPercentageDeducted(totalPercentageDeducted);
+          setTotalApprovedAmount(totalApproved);
+
+          const { totalDeducted: unapprovedDeducted, totalPercentageDeducted: unapprovedPercentage } = calculateTotals(updatedRequests, false);
+          setTotalUnapprovedDeducted(unapprovedDeducted);
+          setTotalUnapprovedPercentageDeducted(unapprovedPercentage);
+
         } else {
           console.error('Failed to approve request:', approvalResponse.data.message);
           setError(approvalResponse.data.message || 'Failed to approve request');
@@ -86,8 +204,13 @@ const AllRequestTable = () => {
   if (loading) return <div className='w-auto ml-auto mr-auto mt-4'>Loading...</div>;
   if (error) return <div className='w-auto ml-auto mr-auto mt-4'>Error: {error}</div>;
 
-  // Filter requests based on showApproved state
-  const filteredRequests = showApproved ? requests.filter(request => request.approved) : requests;
+  // Filter to show only second or subsequent requests, regardless of approval status
+  const filteredRequests = requests.filter(request => request.isSecondRequest);
+
+  // Optionally filter further based on approval status
+  const displayedRequests = showApproved
+    ? filteredRequests.filter(request => request.approved)
+    : filteredRequests;
 
   return (
     <div className='w-full'>
@@ -116,6 +239,54 @@ const AllRequestTable = () => {
               </div>
             </div>
             <div className="p-6 overflow-x-auto">
+              {successMessage && (
+                <div className="mb-4 p-3 bg-green-200 text-green-800 rounded">
+                  {successMessage}
+                </div>
+              )}
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Today's Total</span>
+                  <span className="font-medium text-green-600">{calculateAmountAfterTax(todayTotal, '', new Date().toLocaleDateString('en-US')).toFixed(2)} RWF</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Total Deducted Amount (Approved)</span>
+                  <span className="font-medium text-red-600">{totalDeducted.toFixed(2)} RWF</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Total Percentage Deducted (Approved)</span>
+                  <span className="font-medium text-red-600">{totalPercentageDeducted.toFixed(2)}%</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Total Approved Amount</span>
+                  <span className="font-medium text-green-600">{totalApprovedAmount.toFixed(2)} RWF</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Total Deducted Amount (Unapproved)</span>
+                  <span className="font-medium text-red-600">{totalUnapprovedDeducted.toFixed(2)} RWF</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between p-2 border-b border-blue-gray-50">
+                  <span className="font-semibold text-gray-700">Total Percentage Deducted (Unapproved)</span>
+                  <span className="font-medium text-red-600">{totalUnapprovedPercentageDeducted.toFixed(2)}%</span>
+                </div>
+              </div>
+
               <table className="w-full">
                 <thead>
                   <tr>
@@ -157,7 +328,7 @@ const AllRequestTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRequests.map(request => (
+                  {displayedRequests.map(request => (
                     <tr key={request._id}>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
                         <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-bold text-start">
@@ -176,18 +347,15 @@ const AllRequestTable = () => {
                       </td>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
                         <p className="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600 text-start">
-                          {request.amount} RWF
+                          <span className="text-blue-700 font-bold">{request.amount} RWF</span>
                         </p>
-                        <div className="flex flex-start bg-blue-gray-50 overflow-hidden w-full rounded-sm font-sans text-xs font-medium h-1">
-                          <div
-                            className="flex justify-center items-center h-full bg-gradient-to-tr from-blue-600 to-blue-400 text-white"
-                            style={{ width: `${(request.amount / 10000) * 100}%` }}
-                          ></div>
-                        </div>
                       </td>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
-                        <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600 text-start">
-                          {request.approved ? 'Yes' : 'No'}
+                        <p className={`block antialiased font-sans text-xs font-medium text-start ${request.approved ? 'text-green-600 font-bold' : 'text-red-600'}`}>
+                          {request.approved ? `${calculateAmountAfterTax(request.amount, request.userId, request.createdAt).toFixed(2)} RWF` : 'No approval'}
+                          {request.isSecondRequest && !request.approved && (
+                            <span className="text-white rounded-lg bg-red-600 font-bold text-center block text-xxs ml-auto mr-auto">request2</span>
+                          )}
                         </p>
                       </td>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
@@ -196,13 +364,15 @@ const AllRequestTable = () => {
                         </p>
                       </td>
                       <td className="py-3 px-6 border-b border-blue-gray-50">
-                        {!request.approved && (
+                        {!request.approved ? (
                           <button
                             className="bg-[#29625d] hover:bg-black text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
                             onClick={() => handleApprove(request._id, request.userId, request.amount)}
                           >
                             Approve
                           </button>
+                        ) : (
+                          <span className="text-green-600 text-[12px]">Approved</span>
                         )}
                       </td>
                     </tr>

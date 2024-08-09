@@ -7,10 +7,12 @@ import { Link } from 'react-router-dom';
 const DashboardMain = () => {
   const [userCount, setUserCount] = useState(0);
   const [adCount, setAdCount] = useState(0);
-  const [revenue, setRevenue] = useState('RWF 0.00'); // Placeholder for revenue
+  const [revenue, setRevenue] = useState('RWF 0.00'); 
   const [madeWithdrawals, setMadeWithdrawals] = useState(0);
-  const [dailyUserCount, setDailyUserCount] = useState(0);  // State for daily user count
-  const [dailyPaymentRequests, setDailyPaymentRequests] = useState(0); // State for daily payment requests count
+  const [dailyUserCount, setDailyUserCount] = useState(0);  
+  const [dailyPaymentRequests, setDailyPaymentRequests] = useState(0); 
+  const [totalRequests, setTotalRequests] = useState(0); 
+  const [totalDeductedAmount, setTotalDeductedAmount] = useState('RWF 0.00'); 
 
   useEffect(() => {
     // Function to fetch dashboard data
@@ -27,7 +29,6 @@ const DashboardMain = () => {
         });
         const usersData = usersResponse.data.data || [];
         setUserCount(usersData.length);
-        console.log(usersData.createdAt);
 
         // Calculate revenue from currentBalance
         const totalRevenue = usersData.reduce((acc, user) => acc + (user.currentBalance || 0), 0);
@@ -52,6 +53,16 @@ const DashboardMain = () => {
           },
         });
         const paymentRequestsData = paymentRequestsResponse.data.data || [];
+
+        // Calculate total requests and deducted amounts
+        const totalRequestsCount = paymentRequestsData.length;
+        const totalDeducted = paymentRequestsData.reduce((acc, request) => {
+          const deductedAmount = calculateAmountAfterTax(request.amount); // Ensure this function is defined
+          return acc + deductedAmount;
+        }, 0);
+
+        setTotalRequests(totalRequestsCount);
+        setTotalDeductedAmount(`RWF ${totalDeducted.toFixed(2)}`);
 
         // Get current date range
         const today = new Date();
@@ -79,6 +90,11 @@ const DashboardMain = () => {
 
     fetchDashboardData();
   }, []);
+
+  const calculateAmountAfterTax = (amount) => {
+    const taxRate = 0.1; // Example tax rate of 10%
+    return amount * (1 - taxRate);
+  };
 
   return (
     <div className="min-h-screen mb-20 bg-gray-100 w-full">

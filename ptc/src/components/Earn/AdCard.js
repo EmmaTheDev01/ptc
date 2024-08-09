@@ -20,6 +20,8 @@ const AdCard = () => {
   const [pageLeftTime, setPageLeftTime] = useState(null); // Track when the user leaves the page
   const [startTime, setStartTime] = useState(null); // Track when the ad view started
   const [watchedAds, setWatchedAds] = useState([]); // State to store watched ads IDs
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const adsPerPage = 8; // Number of ads per page
 
   // Fetch user data
   const fetchUserData = async () => {
@@ -33,19 +35,21 @@ const AdCard = () => {
 
       if (response.data.success) {
         const userData = response.data.data;
-        setUser(userData);
-        setWatchedAds(userData.watchedAds || []); // Store watched ads IDs
-        setLoading(false);
-        fetchAdvertisements(userData.membership); // Pass membership level to fetchAdvertisements
+        if (userData) {
+          setUser(userData);
+          setWatchedAds(userData.watchedAds || []); // Store watched ads IDs
+          setLoading(false);
+          fetchAdvertisements(userData.membership); // Pass membership level to fetchAdvertisements
+        } else {
+          throw new Error("No user data found");
+        }
       } else {
         throw new Error("Failed to fetch user data");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
       setLoading(false);
-      setError(
-        error.response?.data?.message || error.message || "Failed to fetch user data"
-      );
+      window.location.reload();
     }
   };
 
@@ -172,7 +176,7 @@ const AdCard = () => {
     const regExp =
       /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+    return match && match[2] && match[2].length === 11 ? match[2] : null;
   };
 
   // Update favicon and page title with countdown
@@ -279,6 +283,20 @@ const AdCard = () => {
   const getToken = () =>
     localStorage.getItem("token") || Cookies.get("token");
 
+  // Calculate ads for the current page
+  const indexOfLastAd = currentPage * adsPerPage;
+  const indexOfFirstAd = indexOfLastAd - adsPerPage;
+  const currentAds = adverts.slice(indexOfFirstAd, indexOfLastAd);
+
+  // Pagination controls
+  const totalPages = Math.ceil(adverts.length / adsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   // Render loading spinner if data is still loading
   if (loading) return (
     <div className="flex items-center justify-center min-h-screen">
@@ -305,7 +323,7 @@ const AdCard = () => {
     );
   }
 
-  // Render the ad card once data is loaded
+  // Render the ad card with pagination
   return (
     <div className="pt-2 mb-20 md:mb-0 min-h-screen z-100"> {/* Apply mb-20 only on smaller screens */}
       <ToastContainer />
@@ -316,7 +334,7 @@ const AdCard = () => {
         <div className="w-full z-0 bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
           <div className="w-full mx-auto rounded-2xl bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2 mx-auto">
-              {adverts.map((advert) => (
+              {currentAds.map((advert) => (
                 <article
                   key={advert._id}
                   className={`bg-white p-4 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-2xl cursor-pointer ${user?.watchedAds.includes(advert._id) ? 'opacity-50 pointer-events-none' : ''
@@ -420,6 +438,26 @@ const AdCard = () => {
                 </article>
               ))}
             </div>
+            {/* Conditionally render Pagination Controls */}
+            {adverts.length >= 8 && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-1 bg-[#29625d] text-white rounded-md mr-2 disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="mx-2">Page {currentPage} of {totalPages}</span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-1 bg-gray-600 text-white rounded-md ml-2 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

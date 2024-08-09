@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 import { server } from '../../utils/server';
 import { public_key } from './key';
-
+import Cookies from 'js-cookie';
 const BasicPlan = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const BasicPlan = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || Cookies.get('token');
         if (!token) throw new Error('Token not found');
 
         const response = await axios.get(`${server}/auth/profile`, {
@@ -31,9 +31,6 @@ const BasicPlan = () => {
 
     fetchUserProfile();
   }, []);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
   const handlePaymentSuccess = async (response) => {
     console.log('Payment response:', response);

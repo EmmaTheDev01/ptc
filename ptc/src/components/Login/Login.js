@@ -63,9 +63,11 @@ const Login = () => {
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
+        window.location.reload();
       } else {
         toast.error("An error occurred during login.");
         console.error(err);
+        window.location.reload();
       }
     } finally {
       // Hide processing indicator after submission completes
